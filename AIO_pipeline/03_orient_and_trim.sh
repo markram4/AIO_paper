@@ -11,12 +11,11 @@ mkdir ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/
 mkdir ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/3p/logFiles
 
 condor_submit /home/mkramer/projects/target_capture/ruby_round2/jobFiles/3_cutadapt_trim_3p_adapters.job
-
-## Just orient the reads by the 3' adapter, but don't trim
-mkdir ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/3p_noTrim
-mkdir ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/3p_noTrim/logFiles
-
-condor_submit /home/mkramer/projects/target_capture/ruby_round2/jobFiles/3_cutadapt_trim_3p_adapters.noTrim.job
+/usr/local/bin/cutadapt -a CTGTAGGCACCATCAAT \
+  -j 6 -n 3 --rc --info-file $(basedir)/$(outdir)/$(region)/logFiles/$(sample).info.$(region).out\
+  -e 0.15 -o $(basedir)/$(outdir)/$(region)/$(sample).trimmed.$(region).fastq\
+  --untrimmed-output $(basedir)/$(outdir)/$(region)/$(sample).untrimmed.$(region).fastq \
+  $(basedir)/$(indir)/$(sample).fastq
 
 ## 4 Trim 5' adapter with cutadapt
 mkdir ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/5p
@@ -26,6 +25,11 @@ cd ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/3p
 ls -ltr *_*fastq | awk 'BEGIN {FS=" "}{n=split($9,a,".fastq")}{print a[1]}' > samples.txt
 
 condor_submit ~/projects/target_capture/ruby_round2/jobFiles/4_cutadapt_trim_5p_adapters.job
+/usr/local/bin/cutadapt -g GGTATCAACGCAGAGTACATGGG -e 0.15 -n 2 -j 3  \
+  --info-file $(basedir)/$(outdir)/$(region)/logFiles/$(sample).info.$(region).out \
+  -o $(basedir)/$(outdir)/$(region)/$(sample).trimmed.$(region).fastq \
+  --untrimmed-output $(basedir)/$(outdir)/$(region)/$(sample).untrimmed.$(region).fastq \
+  $(basedir)/$(outdir)/$(indir)/$(sample).fastq
 
 ## How many reads have 5p and or 3p adapter
 cd ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/5p
