@@ -1,7 +1,9 @@
 ######################################
 ## 2 Demultiplex with cutadapt
 ######################################
+#####
 ### 1 Trim the sequences 5' of the barcodes before demulitplexing
+#####
 mkdir ~/projects/target_capture/ruby_round2/data/2_cutadapt_trim_adapters
 mkdir ~/projects/target_capture/ruby_round2/data/2_cutadapt_trim_adapters/logFiles
 
@@ -20,7 +22,9 @@ cat ~/projects/target_capture/ruby_round2/data/1_guppyOUT/fc1/pass/*\
   --untrimmed-output ~/projects/target_capture/ruby_round2/data/2_cutadapt_trim_adapters/ruby.round2.untrimmed.fastq \
   - 
 
+#####
 ### 2 Demultiplex
+#####
 ## make file with barcode pairs used
 mkdir ~/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex
 mkdir ~/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/logFiles
@@ -37,6 +41,7 @@ awk 'NR==FNR{A[$2]=$1;next}{if ($2 in A) print ">"A[$2] "\n" "^" $6 "..." $4 "$"
 
 ## Submit demultiplexing job
 condor_submit ~/projects/target_capture/ruby_round2/jobFiles/2_cutadapt_demultiplex.job 
+
 /usr/local/bin/cutadapt \
   -e 0.25 \
   -j 10 \
@@ -47,7 +52,7 @@ condor_submit ~/projects/target_capture/ruby_round2/jobFiles/2_cutadapt_demultip
   --untrimmed-output $(out_dir)/unassigned.fastq $(in_dir)/ruby.round2.i5_i7.trimmed.fastq
 
 ## Count number of reads in each sample
-cd /home/mkramer/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex
+cd ~/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex
 
 for file in *_*fastq; do awk 'BEGIN {FS=" "}{OFS="\t"}{n=split(FILENAME,a,".fastq")}END{print NR/4,a[1]}' $file >> fastq_read_counts.ruby_round2.txt; done &
 for file in *fastq; do awk 'BEGIN {FS=" "}{OFS="\t"}{n=split(FILENAME,a,".fastq")}END{print NR/4,a[1]}' $file >> fastq_read_counts.plus_unassigned.txt; done  &
