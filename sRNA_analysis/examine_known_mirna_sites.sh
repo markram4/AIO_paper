@@ -43,7 +43,7 @@ bowtie  -q -v 0 -a --best --strata /cluster/pixstor/slotkinr-lab/mkramer/annotat
 
 ## Get gtf file with relative coordinates for plotting, and invert strandedness if it's - strand for miRNA targets
 
- python /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/Araport_annotations/get_rel_coords_mir_targets.py /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/mirbase_athaliana.uniq.names.no_ppt.targets.ath_deg.txt  /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/Araport_annotations/Araport11_GTF_genes_transposons.current.gtf
+python /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/Araport_annotations/get_rel_coords_mir_targets.py /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/mirbase_athaliana.uniq.names.no_ppt.targets.ath_deg.txt  /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/Araport_annotations/Araport11_GTF_genes_transposons.current.gtf
 
 ## Get gtf file with relative coordinates for plotting, and invert strandedness if it's - strand for targets
 awk '{OFS=FS="\t"}{print $1".1"}' /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/At_v2/At_array.v2.targets_class.pcg.txt > /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/At_v2/At_array.v2.targets_class.pcg.transcript.txt
