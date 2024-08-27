@@ -22,3 +22,4 @@ when_to_transfer_output = ON_EXIT
 ######################Change variable below this line
 out_dir                 = /home/mkramer/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex
 in_dir                  = /home/mkramer/projects/target_capture/ruby_round2/data/2_cutadapt_trim_adapters
+queue
