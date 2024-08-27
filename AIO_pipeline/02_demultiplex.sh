@@ -25,38 +25,35 @@ cat ~/projects/target_capture/ruby_round2/data/1_guppyOUT/fc1/pass/*\
 #####
 ### 2 Demultiplex
 #####
-## make file with barcode pairs used
 mkdir ~/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex
 mkdir ~/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/logFiles
 mkdir ~/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/barcodes
 
 
+## make file with barcode pairs used
 ## Make file with well number and sample name then pull out barcodes based on this number. Third column has product number where the barcodes are from.
 ## Use this file to pull out the appropriate barcodes from the file provided by NEB
-cd /home/mkramer/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/barcodes
+cd ~/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/barcodes
 awk 'NR==FNR{A[$2]=$1;next}{if ($2 in A) print ">"A[$2] "\n" "^" $6 "..." $4 "$"}'\
   ~/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/barcodes/ruby_round2_barcodes_used.txt\
   ~/projects/target_capture/commonFiles/E6442_illumina_barcodes.txt > \
   ~/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/barcodes/ruby_round2_barcodes_used.anchored.fa
 
-## Submit demultiplexing job
+## Use cutadapt to demultiplex samples
 condor_submit ~/projects/target_capture/ruby_round2/jobFiles/2_cutadapt_demultiplex.job 
 
 /usr/local/bin/cutadapt \
   -e 0.25 \
   -j 10 \
-  -g file:$(out_dir)/barcodes/ruby_round2_barcodes_used.anchored.fa\
-  --info-file  $(out_dir)/cutadapt_demultplex.info.out  \
-  -o $(out_dir)/{name}.fastq \
+  -g file:~/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/barcodes/ruby_round2_barcodes_used.anchored.fa\
+  --info-file  ~/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/cutadapt_demultplex.info.out  \
+  -o ~/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/{name}.fastq \
   --rc --action=lowercase \
-  --untrimmed-output $(out_dir)/unassigned.fastq $(in_dir)/ruby.round2.i5_i7.trimmed.fastq
+  --untrimmed-output ~/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/unassigned.fastq\
+  ~projects/target_capture/ruby_round2/data/2_cutadapt_trim_adapters/ruby.round2.i5_i7.trimmed.fastq
 
 ## Count number of reads in each sample
 cd ~/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex
 
 for file in *_*fastq; do awk 'BEGIN {FS=" "}{OFS="\t"}{n=split(FILENAME,a,".fastq")}END{print NR/4,a[1]}' $file >> fastq_read_counts.ruby_round2.txt; done &
 for file in *fastq; do awk 'BEGIN {FS=" "}{OFS="\t"}{n=split(FILENAME,a,".fastq")}END{print NR/4,a[1]}' $file >> fastq_read_counts.plus_unassigned.txt; done  &
-
-Rscript /home/mkramer/projects/target_capture/commonFiles/pieChartWClist.pctDemultiplex.R /home/mkramer/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/fastq_read_counts.ruby_round2.txt /home/mkramer/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/ruby_round2.demultiplex.pieChart.pdf
-
-Rscript /home/mkramer/projects/target_capture/commonFiles/pieChartWClist.pctDemultiplex.R /home/mkramer/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/fastq_read_counts.plus_unassigned.txt /home/mkramer/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/ruby_round2.demultiplex.pieChart.plus_unassigned.pdf
