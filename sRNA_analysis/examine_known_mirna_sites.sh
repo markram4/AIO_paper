@@ -18,12 +18,11 @@ cd /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis
 grep -i -f mirbase_athaliana.uniq.names.no_ppt.txt /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/ath/ath.deg | awk -F'[\t]' '{print $2}' | sort -u >  /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/mirbase_athaliana.uniq.names.no_ppt.targets.ath_deg.txt 
 
 ## Create fasta file from weird format downloaded from TarDB
-python /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/ath/get_fasta_from_files.py ath.deg > /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/ath/ath.deg.fasta
+python /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/jobFiles/get_fasta_from_files.py ath.deg > /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/ath/ath.deg.fasta
 
 ## Extract cDNA sequences for genes of interest
 cd /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis
 module load seqtk
-
 seqtk subseq /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/Araport_annotations/Araport11_seq_20160703.fa  /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/mirbase_athaliana.uniq.names.no_ppt.targets.ath_deg.txt > /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/mirbase_athaliana.uniq.names.no_ppt.targets.ath_deg.Araport11_genes.201606.transcript.fasta  
 
 ## Extract cDNA sequences for protein coding genes from target capture as control loci
@@ -38,8 +37,6 @@ cat /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/mirbase_athali
 bowtie-build /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/At_v2/Araport11_genes.201606.transcript.miRNA_targets.pcg_v2.35S_RUBY.fa /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/At_v2/bowtie_indexes/Araport11_genes.201606.transcript.miRNA_targets.pcg_v2.35S_RUBY.fa 
 
 sbatch /cluster/pixstor/slotkinr-lab/mkramer/projects/sRNA/R25/jobFiles/09_miRNA_search_bowtie.slurm.sh /cluster/pixstor/slotkinr-lab/mkramer/projects/sRNA/R25/data/06_rRNA_tRNA_free/ruby_samples.txt
-#bowtie -p 8 -v 3 -a --best --strata /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/At_v2/bowtie_indexes/Araport11_genes.201606.cdna.miRNA_targets.pcg_v1.35S_RUBY.fa /cluster/pixstor/slotkinr-lab/mkramer/projects/sRNA/R25/data/06_rRNA_tRNA_free/R1S03_MK016_BR1.1red_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free.fasta -fS 2> tmp.txt | samtools view -h -b -F 4 - > tmp.bam
-
 
 ## Map target sites to their own genes to get locations of where the miRNAs should bind
 bowtie  -q -v 0 -a --best --strata /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/At_v2/bowtie_indexes/Araport11_genes.201606.transcript.miRNA_targets.pcg_v2.35S_RUBY.fa  /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/ath/ath.deg.fasta -fS 2> tmp.txt | samtools view -h -b -F4 - | bamToBed -i -  | sort -k1,1 -k2,2n | awk '{FS=OFS="\t"}{n=split($4,A,".")}{print $1,$2,$3,A[1],$5,$6}' | sort -u > /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/ath/ath.deg.mirna_coord_in_targets.bed
