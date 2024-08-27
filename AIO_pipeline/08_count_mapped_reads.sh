@@ -1,5 +1,5 @@
 ##########################################
-## 7 Count number of reads from rRNA, targets, genome, unmapped
+## 8 Count number of reads from rRNA, targets, genome, unmapped
 ##########################################
 mkdir /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/6_minimap/mapped_pct
 cd /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/6_minimap/mapped_pct
