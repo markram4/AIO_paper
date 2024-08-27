@@ -1,0 +1,24 @@
+###############
+#nanopore pipeline step 2 - demultiplexing with cutadapt
+###############
+universe         = vanilla
+getenv           = true
+accounting_group = $ENV(CONDOR_GROUP)
+request_cpus            = 10
+request_memory          = 10
+notification            = Error
+
+log             = $(out_dir)/logFiles/cutadapt_demultplex.log
+output          = $(out_dir)/logFiles/cutadapt_demultplex.out
+error           = $(out_dir)/logFiles/cutadapt_demultplex.err
+
+executable       = /usr/local/bin/cutadapt
+arguments        = -e 0.25 -j 10  -g file:$(out_dir)/barcodes/ruby_round2_barcodes_used.anchored.fa --info-file  $(out_dir)/cutadapt_demultplex.info.out  -o $(out_dir)/{name}.fastq --rc --action=lowercase --untrimmed-output $(out_dir)/unassigned.fastq $(in_dir)/ruby.round2.i5_i7.trimmed.fastq
+
+transfer_executable = False
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+
+######################Change variable below this line
+out_dir                 = /home/mkramer/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex
+in_dir                  = /home/mkramer/projects/target_capture/ruby_round2/data/2_cutadapt_trim_adapters
