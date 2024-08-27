@@ -50,7 +50,7 @@ condor_submit ~/projects/target_capture/ruby_round2/jobFiles/2_cutadapt_demultip
   -o ~/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/{name}.fastq \
   --rc --action=lowercase \
   --untrimmed-output ~/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/unassigned.fastq\
-  ~projects/target_capture/ruby_round2/data/2_cutadapt_trim_adapters/ruby.round2.i5_i7.trimmed.fastq
+  ~/projects/target_capture/ruby_round2/data/2_cutadapt_trim_adapters/ruby.round2.i5_i7.trimmed.fastq
 
 ## Count number of reads in each sample
 cd ~/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex
