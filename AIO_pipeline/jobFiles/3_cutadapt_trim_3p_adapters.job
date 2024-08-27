@@ -1,0 +1,29 @@
+###############
+#nanopore pipeline step 3 - trimming adapters with cutadapt
+###############
+universe         = vanilla
+getenv           = true
+accounting_group = $ENV(CONDOR_GROUP)
+request_cpus            = 6
+request_memory          = 3
+notification            = Error
+Requirements            =(TARGET.Machine=!="cylon.datasci.danforthcenter.org")
+
+log              = $(basedir)/$(outdir)/$(region)/logFiles/$(sample).cutadapt_trimming.$(region).log
+output           = $(basedir)/$(outdir)/$(region)/logFiles/$(sample).cutadapt_trimming.$(region).out
+error            = $(basedir)/$(outdir)/$(region)/logFiles/$(sample).cutadapt_trimming.$(region).err
+
+executable       = /usr/local/bin/cutadapt 
+arguments        = -a CTGTAGGCACCATCAAT -j 6 -n 3 --rc --info-file $(basedir)/$(outdir)/$(region)/logFiles/$(sample).info.$(region).out -e 0.15 -o $(basedir)/$(outdir)/$(re
+gion)/$(sample).trimmed.$(region).fastq --untrimmed-output $(basedir)/$(outdir)/$(region)/$(sample).untrimmed.$(region).fastq $(basedir)/$(indir)/$(sample).fastq
+
+transfer_executable = False
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+
+######################Change variable below this line
+basedir = /home/mkramer/projects/target_capture/ruby_round2/data
+outdir = 4_cutadapt_trim_5p_3p_adapters
+indir = 3_cutadapt_demultiplex
+region = 3p
+queue sample from $(basedir)/ruby_round2_fileNames.txt
