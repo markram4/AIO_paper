@@ -4,32 +4,35 @@
 ## 3 Trim 3' adapter with cutadapt
 cd ~/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/
 
-cut -f 2 ~/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/fastq_read_counts.txt > ~/projects/target_capture/ruby_round2/data/ruby_round3_fileNames.txt
-
+## Make required output directories
 mkdir ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters
 mkdir ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/3p
 mkdir ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/3p/logFiles
 
-condor_submit /home/mkramer/projects/target_capture/ruby_round2/jobFiles/3_cutadapt_trim_3p_adapters.job
+
 /usr/local/bin/cutadapt -a CTGTAGGCACCATCAAT \
-  -j 6 -n 3 --rc --info-file $(basedir)/$(outdir)/$(region)/logFiles/$(sample).info.$(region).out\
-  -e 0.15 -o $(basedir)/$(outdir)/$(region)/$(sample).trimmed.$(region).fastq\
-  --untrimmed-output $(basedir)/$(outdir)/$(region)/$(sample).untrimmed.$(region).fastq \
-  $(basedir)/$(indir)/$(sample).fastq
+  -j 6\
+  -n 3\
+  --rc\
+  -e 0.15\
+  --info-file ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/3p/logFiles/02_MK017_rep1.35S.8green.info.3p.out\
+  -o ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/3p/02_MK017_rep1.35S.8green.trimmed.3p.fastq\
+  --untrimmed-output ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/3p/02_MK017_rep1.35S.8green.untrimmed.3p.fastq \
+  ~/projects/target_capture/ruby_round2/data/3p/02_MK017_rep1.35S.8green.fastq
 
 ## 4 Trim 5' adapter with cutadapt
 mkdir ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/5p
 mkdir ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/5p/logFiles
 cd ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/3p
 
-ls -ltr *_*fastq | awk 'BEGIN {FS=" "}{n=split($9,a,".fastq")}{print a[1]}' > samples.txt
-
-condor_submit ~/projects/target_capture/ruby_round2/jobFiles/4_cutadapt_trim_5p_adapters.job
-/usr/local/bin/cutadapt -g GGTATCAACGCAGAGTACATGGG -e 0.15 -n 2 -j 3  \
-  --info-file $(basedir)/$(outdir)/$(region)/logFiles/$(sample).info.$(region).out \
-  -o $(basedir)/$(outdir)/$(region)/$(sample).trimmed.$(region).fastq \
-  --untrimmed-output $(basedir)/$(outdir)/$(region)/$(sample).untrimmed.$(region).fastq \
-  $(basedir)/$(outdir)/$(indir)/$(sample).fastq
+/usr/local/bin/cutadapt -g GGTATCAACGCAGAGTACATGGG\
+  -e 0.15\
+  -n 2\
+  -j 3 \
+  --info-file ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/5p/logFiles/02_MK017_rep1.35S.8green.trimmed.3p.info.5p.out \
+  -o ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/5p/02_MK017_rep1.35S.8green.trimmed.3p.trimmed.5p.fastq \
+  --untrimmed-output ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/5p/02_MK017_rep1.35S.8green.trimmed.3p.untrimmed.5p.fastq \
+  ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/3p/02_MK017_rep1.35S.8green.trimmed.3p.fastq
 
 ## How many reads have 5p and or 3p adapter
 cd ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/5p
@@ -51,7 +54,4 @@ for sample in ~/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_a
 
 paste -d "\t" tmp1.txt tmp2.txt tmp3.txt tmp4.txt tmp5.txt > number_reads_trimmed.txt &&
 rm *tmp* &
-
-
-/usr/bin/Rscript ~/projects/target_capture/commonFiles/barplot.cutadapt_trimming.R /home/mkramer/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/5p/number_reads_trimmed.txt
 
