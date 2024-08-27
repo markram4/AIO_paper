@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Get file of samples to map
-# for file in /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/6_minimap/1_map_to_rRNA_tRNA/output/rRNA_free_fastq/*fastq; do echo $(basename $file .fastq) >> /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/6_minimap/1_map_to_rRNA_tRNA/output/rRNA_free_fastq/samples.txt ; done 
+for file in /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/6_minimap/1_map_to_rRNA_tRNA/output/rRNA_free_fastq/*fastq; do echo $(basename $file .fastq) >> /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/6_minimap/1_map_to_rRNA_tRNA/output/rRNA_free_fastq/samples.txt ; done 
 
 
 ## Usage: 
@@ -84,8 +84,7 @@ module load samtools
 ## MAP
 sample=\$(sed -n "\${SLURM_ARRAY_TASK_ID}p" "$SAMPLES_FILE")
 
-minimap2 -t 6 -G12k -ax splice "$ANNOTATION" "$INDIR/\${sample}.fastq" 2> "$BASEDIR/$MAPDIR/$OUTDIR/logFiles/\${sample}.minimap.log" | samtools view -u - > "$BASEDIR/$MAPDI
-R/$OUTDIR/output/\${sample}.bam"
+minimap2 -t 6 -G12k -ax splice "$ANNOTATION" "$INDIR/\${sample}.fastq" 2> "$BASEDIR/$MAPDIR/$OUTDIR/logFiles/\${sample}.minimap.log" | samtools view -u - > "$BASEDIR/$MAPDIR/$OUTDIR/output/\${sample}.bam"
 
 ##---------------------------------------------------------------------------------
 
