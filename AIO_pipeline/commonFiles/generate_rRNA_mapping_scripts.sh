@@ -1,11 +1,4 @@
 #!/bin/bash
-# Get list of samples to map
-# for file in /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/5p/*.trimmed.3p.trimmed.5p.fastq; do echo $(basename $file .fastq)| sed 's/.trimmed.3p.trimmed.5p//' >> /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/5p/samples.txt; done 
-
-## Usage :\
-# sbatch /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/commonFiles/generate_rRNA_mapping_scripts.sh\
-# ruby_round2\
-# /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/5p/samples.txt
 
 ##---------------------------------------------------------------------------------
 
