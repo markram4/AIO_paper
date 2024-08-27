@@ -12,3 +12,5 @@ python /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/commonFiles
 cd /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round1/data/6_minimap/2_map_to_capture/output/mapped_to_targets/bedFiles/deseq
 
 python /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/commonFiles/collapse_transcripts_full.py  /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round1/data/6_minimap/2_map_to_capture/output/mapped_to_targets/bedFiles/deseq 5 
+
+Rscript /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/commonFiles/deseq_aio_collapsed_transcripts.R
