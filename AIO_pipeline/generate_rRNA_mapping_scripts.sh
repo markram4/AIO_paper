@@ -77,8 +77,7 @@ module load samtools
 ## MAP TO FILE
 sample=\$(sed -n "\${SLURM_ARRAY_TASK_ID}p" "$SAMPLES_FILE")
 
-minimap2 -t 6 -G 12k -a "$ANNOTATION" "$INDIR/\${sample}.trimmed.3p.trimmed.5p.rRNA_free.fastq" 2> "$BASEDIR/$MAPDIR/$OUTDIR/logFiles/\${sample}.minimap.log" | samtools vie
-w -u - > "$BASEDIR/$MAPDIR/$OUTDIR/output/\${sample}.bam"
+minimap2 -t 6 -G 12k -a "$ANNOTATION" "$INDIR/\${sample}.trimmed.3p.trimmed.5p.rRNA_free.fastq" 2> "$BASEDIR/$MAPDIR/$OUTDIR/logFiles/\${sample}.minimap.log" | samtools view -u - > "$BASEDIR/$MAPDIR/$OUTDIR/output/\${sample}.bam"
 
 ##----------------------------------------------------------------------------------------
 ## Separate into mapped and unmapped
