@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Get file of samples to map
+# for file in /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/6_minimap/1_map_to_rRNA_tRNA/output/rRNA_free_fastq/*fastq; do echo $(basename $file .fastq) >> /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/6_minimap/1_map_to_rRNA_tRNA/output/rRNA_free_fastq/samples.txt ; done 
+
+
 ## Usage: 
 #bash /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/commonFiles/generate_target_mapping_scripts.sh\
 #ruby_round2\
