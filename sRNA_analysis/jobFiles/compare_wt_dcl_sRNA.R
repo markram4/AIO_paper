@@ -1,8 +1,6 @@
 library(ggplot2)
-library(ggVennDiagram)
 library("ggvenn")
 library(tidyverse)
-library(dplyr)
 library(eulerr)
 options(bedtools.path = "/usr/local/bin")
 library(bedtoolsr)
