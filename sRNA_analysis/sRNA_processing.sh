@@ -30,7 +30,7 @@ mkdir /cluster/pixstor/slotkinr-lab/mkramer/projects/sRNA/R25/data/05_sizeFilter
 cd /cluster/pixstor/slotkinr-lab/mkramer/projects/sRNA/R25/data/04_mapUnfiltered
 
 #---------------- RUN COMMAND -------------------------
-sbatch /cluster/pixstor/slotkinr-lab/mkramer/projects/sRNA/R25/jobFiles/04_sizeFilter_rmChlMito.slurm.sh
+sbatch /cluster/pixstor/slotkinr-lab/mkramer/projects/sRNA/R26/jobFiles/04_rmChlMito.slurm.sh R26 /cluster/pixstor/slotkinr-lab/mkramer/projects/sRNA/R26/data/01_fastqFiles/samples.dcl_RUBY.wt.txt
 #------------------------------------------------------
 
 ###########################
@@ -39,7 +39,7 @@ sbatch /cluster/pixstor/slotkinr-lab/mkramer/projects/sRNA/R25/jobFiles/04_sizeF
 mkdir /cluster/pixstor/slotkinr-lab/mkramer/projects/sRNA/R25/data/06_rRNA_tRNA_free
 
 #---------------- RUN COMMAND -------------------------
-sbatch /cluster/pixstor/slotkinr-lab/mkramer/projects/sRNA/R25/jobFiles/05_remove_rRNA_tRNA.slurm.array.sh
+sbatch /cluster/pixstor/slotkinr-lab/mkramer/projects/sRNA/R26/jobFiles/05_remove_rRNA_tRNA.slurm.array.sh ruby_round5 R26 /cluster/pixstor/slotkinr-lab/mkramer/projects/sRNA/R26/data/01_fastqFiles/samples.dcl_RUBY.wt.txt
 #------------------------------------------------------
 
 ############################
