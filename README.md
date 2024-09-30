@@ -8,8 +8,8 @@
 * AIO_pipeline
 Directory structure:
 /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2
-├── data
-│   ├── 2_cutadapt_trim_adapters
+    data
+      2_cutadapt_trim_adapters
 │   │   └── logFiles
 │   ├── 3_cutadapt_demultiplex
 │   │   ├── barcodes
