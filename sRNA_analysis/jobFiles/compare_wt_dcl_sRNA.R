@@ -1,6 +1,8 @@
 library(ggplot2)
+library(ggVennDiagram)
 library("ggvenn")
 library(tidyverse)
+library(dplyr)
 library(eulerr)
 options(bedtools.path = "/usr/local/bin")
 library(bedtoolsr)
@@ -9,24 +11,24 @@ library(cowplot)
 library(ggpubr)
 library(scales)
 
-setwd("/cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round5/data/9_sRNA/shortStack/merge_br/bedFiles")
+setwd("/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_dcl_vs_wt")
 
-wt.red <- c(list.files(path = "/cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/9_sRNA/shortStack/merge_br/bedFiles", 
+wt.red <- c(list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_dcl_vs_wt", 
                        pattern = "*35S.1red.trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free.final.RUBY.bed",full.names=T),
-            list.files(path = "/cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/9_sRNA/shortStack/merge_br/bedFiles", 
+            list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_dcl_vs_wt", 
                        pattern = "*35S.2reddish.trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free.final.RUBY.bed",full.names=T))
 
 in.wt.red <- wt.red %>% 
   map_dfr(~read.table(.,col.names = c("transgene","start","stop","read","seq","strand")))  %>% select(!read) %>%
   mutate(size=nchar(seq)) %>% tidyr::unite("seq",start:size,sep="_") 
 
-wt.fullRed <- c(list.files(path = "/cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/9_sRNA/shortStack/merge_br/bedFiles", 
+wt.fullRed <- c(list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_dcl_vs_wt", 
                        pattern = "*35S.5fullRed.trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free.final.RUBY.bed",full.names=T))
 in.wt.fullRed <- wt.fullRed %>% 
   map_dfr(~read.table(.,col.names = c("transgene","start","stop","read","seq","strand")))  %>% select(!read) %>%
   mutate(size=nchar(seq)) %>% tidyr::unite("seq",start:size,sep="_")
 
-dcl.red <- c(list.files(path = "/cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round5/data/9_sRNA/shortStack/merge_br/bedFiles", 
+dcl.red <- c(list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_dcl_vs_wt", 
                        pattern = "*35S_dcl1234.1red.sRNA.filtered.rRNA_tRNA_free.final.RUBY.bed",full.names=T))
 in.dcl.red <- dcl.red %>% 
   map_dfr(~read.table(.,col.names = c("transgene","start","stop","read","seq","strand")))  %>% select(!read) %>%
@@ -146,7 +148,13 @@ outCov.common <- ggarrange(common.covPlot,tg,align="v",heights = c(1,0.2),ncol =
 ggsave("coverage_common_sRNA.wt_dcl_alwaysRed.RUBY.pdf" ,plot=outCov.common,height=3,width=5)
 
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+#----------------------------------
 ## Compare dcl and Full Red
 # List containing the vectors
 wt_fullRed_vs_dcl <- list(
