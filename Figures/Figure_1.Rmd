@@ -1,50 +1,17 @@
-Figure_1
-================
+---
+title: "Figure_1"
+output: github_document
+---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you
-execute code within the notebook, the results appear beneath the code.
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
 
-Try executing this chunk by clicking the *Run* button within the chunk
-or by placing your cursor inside it and pressing *Cmd+Shift+Enter*.
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
 
-``` r
+```{r}
 ## Figure 1C
 library(ggplot2)
 library(tidyverse)
-```
-
-    ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-    ## ✔ dplyr     1.1.4     ✔ readr     2.1.5
-    ## ✔ forcats   1.0.0     ✔ stringr   1.5.1
-    ## ✔ lubridate 1.9.3     ✔ tibble    3.2.1
-    ## ✔ purrr     1.0.2     ✔ tidyr     1.3.1
-    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-    ## ✖ dplyr::filter() masks stats::filter()
-    ## ✖ dplyr::lag()    masks stats::lag()
-    ## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
-
-``` r
 library(plyr); library(dplyr)
-```
-
-    ## ------------------------------------------------------------------------------
-    ## You have loaded plyr after dplyr - this is likely to cause problems.
-    ## If you need functions from both plyr and dplyr, please load plyr first, then dplyr:
-    ## library(plyr); library(dplyr)
-    ## ------------------------------------------------------------------------------
-    ## 
-    ## Attaching package: 'plyr'
-    ## 
-    ## The following objects are masked from 'package:dplyr':
-    ## 
-    ##     arrange, count, desc, failwith, id, mutate, rename, summarise,
-    ##     summarize
-    ## 
-    ## The following object is masked from 'package:purrr':
-    ## 
-    ##     compact
-
-``` r
 library(conflicted)
 library(ggpubr)
 
@@ -78,12 +45,7 @@ phenoT2.2 <- inT2 %>% select(Genotype,Phenotype) %>% rbind(inT2.2) %>% group_by(
                 Tg = case_when(Genotype == "MK048" ~ "UBQ:RUBY",grepl("MK05",Genotype)~"UBQ:RUBY",TRUE~"35S:RUBY")) %>%
   dplyr::filter(Genotype != "MK016") %>% dplyr::filter(Tg == "35S:RUBY") %>% dplyr::mutate(Genotype = case_when(Genotype == "MK063" ~ "MK016", TRUE ~ Genotype)) %>% 
   dplyr::mutate(Genotype = str_replace(Genotype,"MK0",""))
-```
 
-    ## `summarise()` has grouped output by 'Genotype'. You can override using the
-    ## `.groups` argument.
-
-``` r
 plotTxt2.2 <- phenoT2.2 %>% select(Genotype,sum,Tg) %>% distinct
 
 ggplot(phenoT2.2, aes(x=factor(Genotype,levels = c("17","16","40","43","34","41","42","44","45")),y=pct, fill=Phenotype)) + geom_col(color='black') + 
@@ -93,9 +55,7 @@ ggplot(phenoT2.2, aes(x=factor(Genotype,levels = c("17","16","40","43","34","41"
   ggtitle("Oberved Phenotypes in\n T2 35S:RUBY Plants")
 ```
 
-![](Figure_1_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
-
-``` r
+```{r}
 ## Figure 1D
 ### qPCR Analysis for RUBY qPCR
 library(plyr)
@@ -152,12 +112,8 @@ toPlot_rnd1 <- analysis_rnd1 %>%
          geno = case_when(geno == "MK016" ~ "Event 16",geno == "MK017" ~ "Event 17\n Always Green"), 
          sample = case_when((geno == "Event 16" & Pheno == "0Red") ~ "Event 16\n Always Red", 
                             (geno == "Event 16" & Pheno != "0Red") ~ "Event 16\n Red-to-Green", TRUE ~ geno))
-```
 
-    ## `summarise()` has grouped output by 'Number', 'Sample', 'Pheno'. You can
-    ## override using the `.groups` argument.
 
-``` r
 themes <- theme(plot.title = element_text(hjust = 0.5),
                 axis.text.x = element_text(angle = 90, vjust = 1, hjust=1),
                 axis.title.x = element_blank(),
@@ -172,11 +128,10 @@ ggplot(toPlot_rnd1,aes(x=Pheno,y=RQ,fill=Pheno)) + geom_bar(stat="identity",posi
   scale_fill_manual(values=c("#B03060","#C97795","#E8C8D4","#C2D5C0","#7FA779","#006400")) + 
   ylab("Relative abundance of RUBY") +
   ggtitle("Abundance of RUBY relative to housekeeping genes")
+
 ```
 
-![](Figure_1_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
-
-``` r
+```{r}
 ## Figure 1E
 library(ggplot2)
 library(dplyr)
@@ -238,6 +193,6 @@ ggplot(b, aes(fill=context, y=Per, x=pheno)) +
   coord_cartesian(ylim=c(0,80)) + theme_bw() +
   themes + facet_nested(target+amplicon~sample+rep,scales="free_x",space="free") +
   ggtitle("DNA methylation in CG, CHG, and CHH")
+
 ```
 
-![](Figure_1_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
