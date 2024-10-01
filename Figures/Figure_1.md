@@ -24,28 +24,6 @@ library(tidyverse)
     ## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
 
 ``` r
-library(plyr); library(dplyr)
-```
-
-    ## ------------------------------------------------------------------------------
-    ## You have loaded plyr after dplyr - this is likely to cause problems.
-    ## If you need functions from both plyr and dplyr, please load plyr first, then dplyr:
-    ## library(plyr); library(dplyr)
-    ## ------------------------------------------------------------------------------
-    ## 
-    ## Attaching package: 'plyr'
-    ## 
-    ## The following objects are masked from 'package:dplyr':
-    ## 
-    ##     arrange, count, desc, failwith, id, mutate, rename, summarise,
-    ##     summarize
-    ## 
-    ## The following object is masked from 'package:purrr':
-    ## 
-    ##     compact
-
-``` r
-library(conflicted)
 library(ggpubr)
 
 setwd("/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_phenotypes")
