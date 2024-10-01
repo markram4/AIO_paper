@@ -11,8 +11,6 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
 ## Figure 1C
 library(ggplot2)
 library(tidyverse)
-library(plyr); library(dplyr)
-library(conflicted)
 library(ggpubr)
 
 setwd("/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_phenotypes")
