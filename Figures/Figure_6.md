@@ -100,10 +100,7 @@ themes <- theme(plot.title = element_text(size=8,color='black',hjust = 0.5),
 
 inNorm <- read.table("/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_aio_read_Count/number_reads_mapped.ruby_rounds1235.txt",header = TRUE)
 norm <- inNorm %>% transmute(sample, MapTotal = rRNA+Targets+Non_targets)
-classes <- "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_aio_read_Count/At_array.v2.Arabidopsis_thaliana.TAIR10.56.Araport11_transposable_element.current.targetChr.construct.transgenes.targets_class.txt"
-inClass <- read.table(classes, col.names = c("FaName","Gene","Class"), as.is = T)
-inClass <- inClass %>% separate(FaName, into = c("faName"),sep="_") %>% 
-  mutate(faName = case_when(grepl("RUBY",Gene)~ Gene, TRUE ~faName ))
+
 ```
 
     ## Warning: Expected 1 pieces. Additional pieces discarded in 79 rows [1, 2, 3, 4, 5, 6, 7,
