@@ -24,61 +24,6 @@ library(see)
 ```
 
 ```{r}
-# Function to perform pairwise ANOVA
-pairwise_anova <- function(data, sample_col, value_col) {
-  # Get unique samples
-  samples <- unique(data[[sample_col]])
-  results <- data.frame(Comparison = character(),
-                         F_value = numeric(),
-                         P_value = numeric(),
-                         Significance = character(),
-                         stringsAsFactors = FALSE)
-  
-  # Loop through each pair of samples
-  for (i in 1:(length(samples) - 1)) {
-    for (j in (i + 1):length(samples)) {
-      sample1 <- samples[i]
-      sample2 <- samples[j]
-      
-      # Filter data for the current pair
-      data1 <- data %>% filter(!!sym(sample_col) == sample1)
-      data2 <- data %>% filter(!!sym(sample_col) == sample2)
-      
-      # Perform ANOVA
-      anova_result <- aov(as.formula(paste(value_col, "~", sample_col)), data = rbind(data1, data2))
-      summary_result <- summary(anova_result)
-      
-      # Extract F-value and p-value
-      f_value <- summary_result[[1]]$`F value`[1]
-      p_value <- summary_result[[1]]$`Pr(>F)`[1]
-      
-      # Determine significance level
-      if (p_value < 0.001) {
-        significance <- "***"
-      } else if (p_value < 0.01) {
-        significance <- "**"
-      } else if (p_value < 0.05) {
-        significance <- "*"
-      } else {
-        significance <- "NS"
-      }
-      
-      # Append results to the data frame
-      results <- rbind(results, data.frame(Sample_1 = sample1,
-                                           Sample_2 = sample2,
-                                           F_value = f_value,
-                                           P_value = p_value,
-                                           Significance = significance,
-                                           stringsAsFactors = FALSE))
-    }
-  }
-  
-  return(results)
-}
-```
-
-
-```{r}
 ## Figure 5A/B - Number of reads mapping to RUBY
 
 ## Input file with number of reads mapping per sample for normalization
