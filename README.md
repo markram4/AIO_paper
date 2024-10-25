@@ -3,7 +3,7 @@
 * This repo contains the AIO paper pipelines ,analysis and ML scripts
 
 
-## Folder structure
+## Content
 
 ### AIO_pipeline
 * /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2
