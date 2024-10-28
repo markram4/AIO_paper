@@ -4,7 +4,7 @@
 ## 3 Trim 3' adapter with cutadapt
 cd /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/
 
-cut -f 2 /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/fastq_read_counts.txt > /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/ruby_round3_fileNames.txt
+cut -f 2 /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/3_cutadapt_demultiplex/fastq_read_counts.ruby_round2.txt > /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/ruby_round3_fileNames.txt
 
 mkdir /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters
 mkdir /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/4_cutadapt_trim_5p_3p_adapters/3p
