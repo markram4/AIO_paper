@@ -6,20 +6,17 @@
 ## Content
 
 ### AIO_pipeline
-* For "All-in-One" RNA-seq data analysis, the directory structure is as follows:
-* Home dir: /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2
-* data
-  - 2_cutadapt_trim_adapters
-  - 3_cutadapt_demultiplex
-  - 4_cutadapt_trim_5p_3p_adapters
-  - 5_minimap
-  - 6_coverage_plots
-* jobFiles
-* scripts
-* 
+* commonFiles -- Files required for data analysis that are common among all experiments. Also in this directory are the barcodes used for one example experiment (ruby_round2). Barcodes for all other experiments in this manuscript can be found in Supplemental Table 4.
+* jobFiles -- jobFiles submitted for each processing step referenced in the .sh files
+* .sh files are shell scripts for each data processing step outlined in **AIO_pipeline_readme.md** This includes running job files, QC steps, and creating directory structures to fit the analysis
 
 ### Figures
+* .Rmd amd .md files used to generate all figures in the manuscript, that were created in R. Some panels are missing because they were not created in R (such as phenotyping images).
+* There are also sub folders containing the images required to embed in .md
    
 ### Random-Forest Classification modeling
 
 ### small RNA analysis
+* jobFiles -- shell scripts or slurm scripts used for data analysis, references in sRNA_readsMe.md
+* sRNA_readMe.sh -- shell script of commands ran for sRNA-seq data processing
+* examine_known_mirna_sites.sh -- shell script of commands ran to examine sRNA coverage at known miRNA targets -- Supplemental Figure 13.
