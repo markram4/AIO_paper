@@ -1,4 +1,16 @@
 ## 'All-in-One' Data Analysis Pipeline
+* The general directory structure for AIO data analysis is : 
+* Home dir: /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2
+* data
+  - 2_cutadapt_trim_adapters
+  - 3_cutadapt_demultiplex
+  - 4_cutadapt_trim_5p_3p_adapters
+  - 5_minimap
+  - 6_coverage_plots
+* jobFiles
+* scripts
+
+  
 1. After sequencing, raw fast5 files are base called using guppy basecaller
 2. Base called fastq files are concatenated and then demultiplexed using a two-step process. First the 5' and 3' sequencing adapters are removed, then the barcodes are examined and files are separated based on the barcode sequences.
 3. Reads are then oriented based on the sequence of the 3' adapter, then the adapter is either trimmed (for mapping) or untrimmed (for UMI examination). The 5' adapter is then removed
