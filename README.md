@@ -11,7 +11,7 @@
 * .sh files are shell scripts for each data processing step outlined in **AIO_pipeline_readme.md** This includes running job files, QC steps, and creating directory structures to fit the analysis
 
 ### Figures
-* .Rmd amd .md files used to generate all figures in the manuscript, that were created in R. Some panels are missing because they were not created in R (such as phenotyping images).
+* .Rmd and .md files used to generate all figures in the manuscript, that were created in R. Some panels are missing because they were not created in R (such as phenotyping images).
 * There are also sub folders containing the images required to embed in .md
    
 ### Random-Forest Classification modeling
