@@ -6,7 +6,14 @@ mkdir /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/
 mkdir /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/2_cutadapt_trim_adapters/logFiles
 
 # require both the 5' and 3' adapters
-cat /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/1_guppyOUT/fc1/pass/* /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/1_guppyOUT/fc2/pass/* /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/1_guppyOUT/fc3/pass/* | /usr/local/bin/cutadapt -e 0.30 -j 5 -g file:/cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/commonFiles/seq_5p_of_barcodes.fa -o /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/2_cutadapt_trim_adapters/ruby.round2.{name}.trimmed.fastq --rc --action=trim --untrimmed-output /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/2_cutadapt_trim_adapters/ruby.round2.untrimmed.fastq - 
+## concatenate all fastq files from base calling - then use cutadapt to remove squencing adapters up/down stream of the barcodes
+cat /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/1_guppyOUT/fc1/pass/* \
+/cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/1_guppyOUT/fc2/pass/* \
+/cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/1_guppyOUT/fc3/pass/* | \
+/usr/local/bin/cutadapt -e 0.30 -j 5 -g file:/cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/commonFiles/seq_5p_of_barcodes.fa \
+-o /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/2_cutadapt_trim_adapters/ruby.round2.{name}.trimmed.fastq \
+--rc --action=trim \
+--untrimmed-output /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/2_cutadapt_trim_adapters/ruby.round2.untrimmed.fastq - 
 
 ## Count the number of reads that get trimmed
 wc -l /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/2_cutadapt_trim_adapters/ruby.round2.i5_i7.trimmed.fastq  | awk 'BEGIN {FS=" "}{OFS="\t"}{print $1/4, "trimmed"}' > /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2/data/2_cutadapt_trim_adapters/ruby.round2.trimmed_count.txt &&
