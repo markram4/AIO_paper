@@ -6,7 +6,7 @@
 ## Content
 
 ### AIO_pipeline
-* commonFiles -- Files required for data analysis that are common among all experiments. Also in this directory are the barcodes used for one example experiment (ruby_round2). Barcodes for all other experiments in this manuscript can be found in Supplemental Table 4.
+* commonFiles -- Files required for data analysis that are common among all experiments. Also in this directory are the barcodes used for one example experiment (ruby_round2). Barcodes for all other experiments in this manuscript can be found in Supplemental Table 1.
 * jobFiles -- jobFiles submitted for each processing step referenced in the .sh files
 * .sh files are shell scripts for each data processing step outlined in **AIO_pipeline_readme.md** This includes running job files, QC steps, and creating directory structures to fit the analysis
 
