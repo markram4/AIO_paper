@@ -1,24 +1,18 @@
 Directory structure:
 /cluster/pixstor/slotkinr-lab/mkramer/projects/target_capture/ruby_round2
-├── data
-│   ├── 2_cutadapt_trim_adapters
-│   │   └── logFiles
-│   ├── 3_cutadapt_demultiplex
-│   │   ├── barcodes
-│   │   └── logFiles
-│   ├── 4_cutadapt_trim_5p_3p_adapters
-│   │   ├── 3p
-│   │   │   └── logFiles
-│   │   ├── 3p_noTrim
-│   │   │   └── logFiles
-│   │   └── 5p
-│   │       └── logFiles
-│   ├── 6_minimap
-│   │   ├── 1_map_to_rRNA_tRNA
-│   │   │   ├── logFiles
-│   │   │   └── output
-│   │   │       ├── mapped_to_rRNA
-│   │   │       └── rRNA_free_fastq
+        data
+                2_cutadapt_trim_adapters
+                3_cutadapt_demultiplex
+                4_cutadapt_trim_5p_3p_adapters
+                        3p
+                        3p_noTrim
+                        5p
+                6_minimap
+                        1_map_to_rRNA_tRNA
+                                logFiles
+                                output
+                                        mapped_to_rRNA
+                                        rRNA_free_fastq
 │   │   ├── 2_map_to_capture
 │   │   │   ├── logFiles
 │   │   │   └── output
