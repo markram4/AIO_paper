@@ -100,4 +100,3 @@ for file in *.bam; do samtools fasta $file | awk '{OFS="\t"}{if (substr($1,1,1)=
 ## Just look at reads mapping to RUBY
 for file in *.final.bed; do grep RUBY $file > $(echo $file | sed 's/final.bed/final.RUBY.bed/'); done &
 
- Rscript /cluster/pixstor/slotkinr-lab/mkramer/projects/sRNA/R25/jobFiles/compare_wt_dcl_sRNA.R
