@@ -16,7 +16,7 @@
    
 ### Random-Forest Classification modeling
 
-*Random forest binary classification modeling using sequence features to diffrentiate phenotypes 
+* Random forest binary classification modeling using sequence features to diffrentiate phenotypes 
   
 ### small RNA analysis
 * jobFiles -- shell scripts or slurm scripts used for data analysis, references in sRNA_readsMe.md
