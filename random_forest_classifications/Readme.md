@@ -5,3 +5,16 @@
 
 * Nine different binary classification models were trained and notebook are included for training and model generalization testing in each comparison sub directory.
 * gen_features.py was used to generate the sequence features
+
+### Directory Structure
+
+* Ruby_RF
+  * AlwaysRed_vs_AlwaysRed_dcl1234
+  * AlwaysRed_vs_FullGreen
+  * AlwaysRed_vs_FullRed
+  * AlwaysRed_vs_RedParts
+  * FullRed_vs_AlwaysRED_dcl1234
+  * FullRed_vs_FullGreen
+  * RedParts_vs_AlwaysRed_dcl1234
+  * RedParts_vs_FullGreen
+  * RedParts_vs_GreenParts
