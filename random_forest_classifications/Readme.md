@@ -18,3 +18,5 @@
   * RedParts_vs_AlwaysRed_dcl1234
   * RedParts_vs_FullGreen
   * RedParts_vs_GreenParts
+
+* Python 3.10,scikit-learn 1.5.2,biopython 1.81
