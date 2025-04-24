@@ -1,5 +1,7 @@
-## This directory contains custom files used in the analysis, including fasta files for all RUBY transgenes used, and custom genome used for mapping from AIO-seq 
+# This directory contains custom files used in the analysis, including fasta files for all RUBY transgenes used, and custom genome used for mapping from AIO-seq 
+## Additional information about how these are created or used is in annotations_readMe.sh or within the scripts in AIO_pipeline, sRNA_analysis or Ribo_seq_analysis
 
+## Annotation files
 * 35S_RUBY_transgene.bed12
 * 35S_RUBY_transgene.trim.bed12
 * 35S_RUBY_transgene_ins.bed12
@@ -16,11 +18,13 @@
 * At_array.v2.RUBY.pMCK010.2bpins.txt
 * At_array.v2.RUBY.txt
 * At_array.v2.ZmUBQ_RUBY.txt
-* At_array.v2.fa
 * At_array.v2.targets_class.txt
 * LsUBQ_RUBY_transgene.bed12
 * ZmUBQ_RUBY_transgene.bed12
 * ZmUBQ_RUBY_transgene.trim.bed12
+
+## Genome sequence files
+* At_array.v2.fa
 * ruby_35s.transgene.fa
 * ruby_35s.transgene.pMCK007.HtoQ.fa
 * ruby_35s.transgene.pMCK010.2bpins.fa
