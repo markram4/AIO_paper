@@ -33,3 +33,12 @@ cat /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/At_v2/At_array
 cut -f1,2,3,4,5,6,7,8,9,10,11,12 /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/At_v2/At_array.v2.Arabidopsis_thaliana.TAIR10.56.Araport11_transposable_element.current.targetChr.construct.transgenes.bed12 > /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/At_v2/At_array.v2.Arabidopsis_thaliana.TAIR10.56.Araport11_transposable_element.current.targetChr.construct.transgenes.2.bed12
 
 cut -f 1,2,3,4,14,6 /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/At_v2/At_array.v2.Arabidopsis_thaliana.TAIR10.56.Araport11_transposable_element.current.targetChr.construct.transgenes.bed12 | awk '{OFS="\t"}{if ($6 != "") print $1,$2,$3,$4,$6,$5;else print $1,$2,$3,$4,$4,$5}' > /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/At_v2/At_array.v2.Arabidopsis_thaliana.TAIR10.56.Araport11_transposable_element.current.targetChr.construct.transgenes.bed
+
+
+################################################
+## Create annotation for Riboseq
+################################################
+awk '{OFS=FS="\t"}{if ($1 != "Mt" && $1 != "Pt") print}' /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/ensembl_downloads/Arabidopsis_thaliana.TAIR10.56.35S_ruby_transgene.gtf  > /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/ensembl_downloads/Arabidopsis_thaliana.TAIR10.56.35S_ruby_transgene.noMtPt.gtf
+
+## Filter for only protein-coding genes in gtf file
+awk '{OFS=FS="\t"}{if ($0 ~ "#") print; else if ($9 ~ /protein_coding/ || $1 == "35S_RUBY_transgene") print}' /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/ensembl_downloads/Arabidopsis_thaliana.TAIR10.56.35S_ruby_transgene.noMtPt.gtf > /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/ensembl_downloads/Arabidopsis_thaliana.TAIR10.56.35S_ruby_transgene.noMtPt.pcg_only.gtf
