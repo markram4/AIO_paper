@@ -4,7 +4,6 @@
 ## filter out ChrMt and ChrPt from gtf
 awk '{OFS=FS="\t"}{if ($1 != "Mt" && $1 != "Pt") print}' /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/ensembl_downloads/Arabidopsis_thaliana.TAIR10.56.35S_ruby_transgene.gtf  > /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/ensembl_downloads/Arabidopsis_thaliana.TAIR10.56.35S_ruby_transgene.noMtPt.gtf
 
-
 ## Filter for only protein-coding genes in gtf file
 awk '{OFS=FS="\t"}{if ($0 ~ "#") print; else if ($9 ~ /protein_coding/ || $1 == "35S_RUBY_transgene") print}' /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/ensembl_downloads/Arabidopsis_thaliana.TAIR10.56.35S_ruby_transgene.noMtPt.gtf > /cluster/pixstor/slotkinr-lab/mkramer/annotations/arabidopsis/ensembl_downloads/Arabidopsis_thaliana.TAIR10.56.35S_ruby_transgene.noMtPt.pcg_only.gtf
 
