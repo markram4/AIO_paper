@@ -26,5 +26,4 @@
 13. Create files for coverage plots. This involved bam > bgr > bw > bed12. Rscripts can be found in Figures sub folder
 14. Count the number of 3' ends
 15. Examine the number reads ending at 5' splice sites and number of reads covering introns
-16. RIBO-seq pre-processing
-17. riboWaltz
+
