@@ -23,10 +23,10 @@
 * sRNA_readMe.sh -- shell script of commands ran for sRNA-seq data processing
 * examine_known_mirna_sites.sh -- shell script of commands ran to examine sRNA coverage at known miRNA targets -- Supplemental Figure 13.
 
-* ### Ribo-seq analysis
+### Ribo-seq analysis
 * ribo_seq_readMe.sh -- shell script of commands ran for sRNA-seq data processing
 * .sh -- shell scripts of commands ran to process ribosome profiling sequencing for input into riboWaltz and DESeq2
 * R scripts for DESeq2 and riboWaltz
 
-* ### Annotations
+### Annotations
 * custom annotation files required for mapping in AIO-seq, sRNA-seq or Ribo-seq.
