@@ -1,0 +1,79 @@
+---
+title: "DESeq_ribo_seq"
+output: github_document
+date: "2025-04-24"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+
+```{r}
+library(methods)
+library("DESeq2")
+library("gplots")
+library("RColorBrewer")
+library(tidyverse)
+library(tximport)
+library(readr)
+```
+
+
+```{r}
+## Set working directory to where the *abundance.tsv files are located from kallisto
+setwd("/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_ribo/")
+
+## Since kallisto exports transcript information, but DESeq requires gene information, convert txt id to gene id
+tx2gene <- read.table("Arabidopsis_thaliana.TAIR10.56.35S_ruby_transgene.noMtPt.pcg_only.txt_to_gene.txt")
+
+## List all .tsv files in your kallisto output directory
+file_paths <- list.files(pattern = "_abundance.tsv$", full.names = TRUE)
+
+## Extract sample names from the filenames (e.g., "sample1", "sample2")
+sample_names <- sub("_abundance.tsv", "", basename(file_paths))
+
+## Create named vector
+files <- setNames(file_paths, sample_names)
+
+txi <- tximport(files, type = "kallisto", tx2gene = tx2gene)
+
+sample_table <- data.frame(
+  sample = sample_names,
+  condition = c("AlwaysRed","fullyRed","AlwaysRed")
+)
+
+# Set rownames to match the names of the 'files' vector
+rownames(sample_table) <- sample_table$sample
+```
+
+
+```{r}
+## Run DESeq
+
+# Build DESeq data set
+dds <- DESeqDataSetFromTximport(txi, colData = sample_table, design = ~ 1)
+
+dds <- estimateSizeFactors(dds)
+vsd <- vst(dds) 
+vsdMat <- assay(vsd)
+colnames(vsdMat) <- with(colData(dds), paste(condition, sep=" : "))
+
+correlation <- cor(vsdMat) *100
+corrstr <- apply(correlation, c(1,2), function(x) sprintf("%.3g", x))
+colors2 <- colorRampPalette(c("white","maroon"))(150)
+#pdf("ribo_seq_deseq_heat_matrix.correlation.pdf")
+heatmap.2(correlation, col=colors2, scale="none", trace="none", 
+          main="correlation between samples", cellnote=corrstr, notecex=0.5, cexRow=0.5,cexCol=0.5,notecol="black")
+#dev.off()
+ 
+
+
+```
+
+
+
