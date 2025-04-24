@@ -1,7 +1,7 @@
 # AIO_paper_analyis
 
 * This repo contains the scripts for "Identification of an aberrant RNA associated with the initiation of transgene silencing" by Marianne C Kramer et al. 
-* This includes all data analysis steps for "All-in-One" RNA-seq, Random Forest machine learning, small RNA sequencing, and RMarkdown files for each figure in the manuscript. 
+* This includes all data analysis steps for "All-in-One" RNA-seq, Random Forest machine learning, small RNA sequencing, RIBO-seq and RMarkdown files for each figure in the manuscript. 
 
 ## Content
 
@@ -28,3 +28,5 @@
 * .sh -- shell scripts of commands ran to process ribosome profiling sequencing for input into riboWaltz and DESeq2
 * R scripts for DESeq2 and riboWaltz
 
+* ### Annotations
+* custom annotation files required for mapping in AIO-seq, sRNA-seq or Ribo-seq.
