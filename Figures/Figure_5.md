@@ -13,8 +13,8 @@ library(tidyverse)
     ## ✔ dplyr     1.1.4     ✔ readr     2.1.5
     ## ✔ forcats   1.0.0     ✔ stringr   1.5.1
     ## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
-    ## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
-    ## ✔ purrr     1.0.2     
+    ## ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+    ## ✔ purrr     1.0.4     
     ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
@@ -22,11 +22,6 @@ library(tidyverse)
 
 ``` r
 library(ggrepel)
-```
-
-    ## Warning: package 'ggrepel' was built under R version 4.3.3
-
-``` r
 library(ggpubr)
 library(janitor)
 ```
@@ -41,17 +36,7 @@ library(janitor)
 ``` r
 library(RColorBrewer)
 library(patchwork)
-```
-
-    ## Warning: package 'patchwork' was built under R version 4.3.3
-
-``` r
 library("ggsci")
-```
-
-    ## Warning: package 'ggsci' was built under R version 4.3.3
-
-``` r
 library("scales")
 ```
 
@@ -68,22 +53,10 @@ library("scales")
 
 ``` r
 library(ggh4x)
-```
-
-    ## 
-    ## Attaching package: 'ggh4x'
-    ## 
-    ## The following object is masked from 'package:ggplot2':
-    ## 
-    ##     guide_axis_logticks
-
-``` r
 library(multcompView)
 library(gggenes)
 library(see)
 ```
-
-    ## Warning: package 'see' was built under R version 4.3.3
 
     ## 
     ## Attaching package: 'see'
@@ -920,118 +893,3 @@ annotate_figure(allFinal,right = text_grob("polyA+ Reads",color='red',face="bold
 ```
 
 ![](Figure_5_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
-
-## Figure 5G - 3’ ends
-
-``` r
-## Read in the data with number of reads ending at each 3' end
-inFile1 <- read.table("/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_3p_end_num/all.combined_normalized_3p_read_count.ruby_round1.txt",header=T)
-inFile2 <- read.table("/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_3p_end_num/all.combined_normalized_3p_read_count.ruby_round2.txt",header=T)
-inFile5 <- read.table("/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_3p_end_num/all.combined_normalized_3p_read_count.ruby_round5.txt",header=T)
-
-## Define theme
-themes <- theme(plot.title = element_text(size=8,color='black',hjust = 0.5),
-                axis.text.x = element_text(size=8,color = 'black',angle = 90, vjust = 0.5, hjust=1),
-                axis.text.y = element_text(size=8,color = 'black'),
-                line = element_line(color = 'black',linewidth=0.3,lineend="round"),
-                axis.title.x = element_blank(),
-                axis.title.y = element_text(color = "black",size=8),
-                strip.text = element_text(color = "black",size=8),
-                legend.position = 'top',
-                legend.key.size= unit(0.3,"cm"),
-                legend.text = element_text(color = "black",size=6),
-                legend.title = element_text(color = "black",size=6),
-                axis.ticks.length=unit(0.0516,"in"))
-
-## Merge and format data sets
-data3 <- rbind(inFile1,inFile2,inFile5) %>% filter(grepl("RUBY",name) & pheno !="01_MK001_rep1.35S.7green") %>% 
-  separate(pheno, into=c("sample","prom","pheno"),sep = "[.]") %>%
-  mutate(pheno = case_when(pheno == "5fullRed" ~ "3fullRed",
-                           pheno == "2reddish" ~ "1red",
-                           prom == "35S_dcl1234" ~ "0red_dcl", TRUE~pheno),
-         prom = case_when(prom == "35S_dcl1234" ~ "35S", TRUE~prom))%>%
-  group_by(start,stop,prom,pheno) %>% 
-  dplyr::summarize(merge_count = mean(count),merge_normScore = mean(normScore),if_merge=n()) 
-```
-
-    ## `summarise()` has grouped output by 'start', 'stop', 'prom'. You can override
-    ## using the `.groups` argument.
-
-``` r
-## Perform ANOVA test
-anova <- aov(merge_normScore ~ pheno, data = data3)
-tukey <- TukeyHSD(anova)
-tukey_df <- as.data.frame(tukey$pheno)
-tukey_df <- mutate(tukey_df, Sig = case_when(`p adj` < 0.001 ~ "***",`p adj` > 0.001 & `p adj` < 0.01 ~ "**",`p adj` > 0.01 & `p adj` < 0.05 ~ "*", TRUE ~ "NS"))
-
-print(tukey_df)
-```
-
-    ##                                 diff           lwr          upr        p adj
-    ## 1red-0red_dcl           1.033092e-03 -0.0001801362 0.0022463194 1.553187e-01
-    ## 3fullRed-0red_dcl       9.520219e-05 -0.0011074632 0.0012978676 9.999867e-01
-    ## 3redParts-0red_dcl      4.804500e-04 -0.0007239607 0.0016848607 9.032926e-01
-    ## 4greenParts-0red_dcl    9.553035e-03  0.0083359519 0.0107701171 0.000000e+00
-    ## 6fullGreen-0red_dcl     1.170046e-02  0.0104628322 0.0129380915 0.000000e+00
-    ## 8green-0red_dcl         1.962656e-02  0.0183102726 0.0209428542 0.000000e+00
-    ## 3fullRed-1red          -9.378894e-04 -0.0021094934 0.0002337147 2.157208e-01
-    ## 3redParts-1red         -5.526416e-04 -0.0017260372 0.0006207540 8.082113e-01
-    ## 4greenParts-1red        8.519943e-03  0.0073335441 0.0097063417 0.000000e+00
-    ## 6fullGreen-1red         1.066737e-02  0.0094599022 0.0118748384 0.000000e+00
-    ## 8green-1red             1.859347e-02  0.0173054992 0.0198814444 0.000000e+00
-    ## 3redParts-3fullRed      3.852478e-04 -0.0007772235 0.0015477191 9.590103e-01
-    ## 4greenParts-3fullRed    9.457832e-03  0.0082822369 0.0106334277 0.000000e+00
-    ## 6fullGreen-3fullRed     1.160526e-02  0.0104084048 0.0128021145 0.000000e+00
-    ## 8green-3fullRed         1.953136e-02  0.0182533331 0.0208093893 0.000000e+00
-    ## 4greenParts-3redParts   9.072585e-03  0.0078952037 0.0102499653 0.000000e+00
-    ## 6fullGreen-3redParts    1.122001e-02  0.0100214033 0.0124186205 0.000000e+00
-    ## 8green-3redParts        1.914611e-02  0.0178664428 0.0204257840 0.000000e+00
-    ## 6fullGreen-4greenParts  2.147427e-03  0.0009360861 0.0033587686 3.591087e-06
-    ## 8green-4greenParts      1.007353e-02  0.0087819245 0.0113651333 0.000000e+00
-    ## 8green-6fullGreen       7.926102e-03  0.0066151176 0.0092370855 0.000000e+00
-    ##                        Sig
-    ## 1red-0red_dcl           NS
-    ## 3fullRed-0red_dcl       NS
-    ## 3redParts-0red_dcl      NS
-    ## 4greenParts-0red_dcl   ***
-    ## 6fullGreen-0red_dcl    ***
-    ## 8green-0red_dcl        ***
-    ## 3fullRed-1red           NS
-    ## 3redParts-1red          NS
-    ## 4greenParts-1red       ***
-    ## 6fullGreen-1red        ***
-    ## 8green-1red            ***
-    ## 3redParts-3fullRed      NS
-    ## 4greenParts-3fullRed   ***
-    ## 6fullGreen-3fullRed    ***
-    ## 8green-3fullRed        ***
-    ## 4greenParts-3redParts  ***
-    ## 6fullGreen-3redParts   ***
-    ## 8green-3redParts       ***
-    ## 6fullGreen-4greenParts ***
-    ## 8green-4greenParts     ***
-    ## 8green-6fullGreen      ***
-
-``` r
-cld <- multcompLetters4(anova, tukey)
-
-Tk <- group_by(data3, pheno) %>%
-  dplyr::summarise(mean=mean(merge_normScore), quant = quantile(merge_normScore, probs = 0.75)) %>%
-  arrange(desc(mean))
-
-# extracting the compact letter display and adding to the Tk table
-cld <- as.data.frame.list(cld$pheno)
-Tk$cld <- cld$Letters
-
-ggplot(data3,aes(x=pheno,y=merge_normScore,fill=pheno))   +
-  geom_violinhalf(position = position_nudge(x = -0.25, y = 0),flip=T) +
-  geom_boxplot(notch = T,outlier.shape=4,width = 0.4)+  
-  theme_bw()+themes +
-  scale_fill_manual(values=c("#853061","#B03060","#C97795","#E8C8D4","#C2D5C0","#7FA779","#196400"))+
-  scale_color_manual(values=c("#853061","#B03060","#C97795","#E8C8D4","#C2D5C0","#7FA779","#196400"))+
-  scale_y_log10()+ ylab("Normalized read count at each 3' end (log10)") + theme(legend.position= "none")+
-  geom_text(data=Tk,aes(x=pheno,y=quant,label=cld), size = 3, vjust=-1, hjust =-1) +
-  ggtitle("Figure 5G: Abundance of each 3' end within RUBY")
-```
-
-![](Figure_5_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->

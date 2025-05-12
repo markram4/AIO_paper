@@ -13,8 +13,8 @@ library(tidyverse)
     ## ✔ dplyr     1.1.4     ✔ readr     2.1.5
     ## ✔ forcats   1.0.0     ✔ stringr   1.5.1
     ## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
-    ## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
-    ## ✔ purrr     1.0.2     
+    ## ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+    ## ✔ purrr     1.0.4     
     ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
@@ -22,11 +22,6 @@ library(tidyverse)
 
 ``` r
 library(ggrepel)
-```
-
-    ## Warning: package 'ggrepel' was built under R version 4.3.3
-
-``` r
 library(ggpubr)
 library(janitor)
 ```
@@ -41,17 +36,7 @@ library(janitor)
 ``` r
 library(RColorBrewer)
 library(patchwork)
-```
-
-    ## Warning: package 'patchwork' was built under R version 4.3.3
-
-``` r
 library("ggsci")
-```
-
-    ## Warning: package 'ggsci' was built under R version 4.3.3
-
-``` r
 library("scales")
 ```
 
@@ -68,20 +53,8 @@ library("scales")
 
 ``` r
 library(ggh4x)
-```
-
-    ## 
-    ## Attaching package: 'ggh4x'
-    ## 
-    ## The following object is masked from 'package:ggplot2':
-    ## 
-    ##     guide_axis_logticks
-
-``` r
 library(see)
 ```
-
-    ## Warning: package 'see' was built under R version 4.3.3
 
     ## 
     ## Attaching package: 'see'
@@ -95,8 +68,6 @@ library(gggenes)
 library(multcompView)
 library(Biostrings)
 ```
-
-    ## Warning: package 'Biostrings' was built under R version 4.3.3
 
     ## Loading required package: BiocGenerics
     ## 
@@ -120,7 +91,7 @@ library(Biostrings)
     ##     colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,
     ##     get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply,
     ##     match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
-    ##     Position, rank, rbind, Reduce, rownames, sapply, setdiff, sort,
+    ##     Position, rank, rbind, Reduce, rownames, sapply, saveRDS, setdiff,
     ##     table, tapply, union, unique, unsplit, which.max, which.min
     ## 
     ## Loading required package: S4Vectors
@@ -173,9 +144,6 @@ library(Biostrings)
     ##     compact
     ## 
     ## Loading required package: GenomeInfoDb
-
-    ## Warning: package 'GenomeInfoDb' was built under R version 4.3.3
-
     ## 
     ## Attaching package: 'Biostrings'
     ## 
@@ -250,56 +218,190 @@ norm.All <- mergeFile.all %>% left_join(norm,by=c("Sample"="sample")) %>%
   separate(genotype,into=c("num","plant","rep"),sep="_") %>% tidyr::unite(genotype, c(plant,rep),sep="_")
 
 ## Dfine Colors
-phenoColors <- c("#B03060","#C97795","#7FA779","#006400")
+phenoColors <- c("#B03060","#C97795","#E8C8D4","#C2D5C0","#7FA779","#006400")
 
 ## Filter and format df for plotting
-all.RUBY2 <- norm.All %>% filter(grepl("RUBY",Name)&grepl("35S",promoter)) %>%  separate(genotype,into=c("Genotype","Rep")) %>% mutate(class = case_when(phenotype == "1red" ~ "Always Red", phenotype == "8green" ~ "Always Green",TRUE~ "Red-to-Green"),phenotype = case_when(phenotype == "5fullRed"~"2fullRed",TRUE ~ phenotype)) %>% mutate(Rep = str_replace(Rep,"rep","Rep ")) %>% 
-  filter(phenotype != "3redParts")
+all.RUBY2 <- norm.All %>% filter(grepl("RUBY",Name)) %>%  separate(genotype,into=c("Genotype","Rep")) %>% mutate(class = case_when(phenotype == "1red" ~ "Always Red", phenotype == "8green" ~ "Always Green",TRUE~ "Red-to-Green"),phenotype = case_when(phenotype == "5fullRed"~"2fullRed",TRUE ~ phenotype)) %>% mutate(Rep = str_replace(Rep,"rep","Rep "),phenotype = case_when((promoter == "LsUBQ" & phenotype=="3redParts")~"2fullRed",(promoter == "LsUBQ" & phenotype=="4greenParts")~"6fullGreen",TRUE ~ phenotype)) %>% filter(!(promoter == "35S" & phenotype=="3redParts")) %>% mutate(stats=paste(promoter,phenotype,sep="_"))
+
 
 ## Perform ANOVA test
-anova <- aov(normTotal ~ phenotype, data = all.RUBY2)
+anova <- aov(normTotal ~ stats, data = all.RUBY2)
 tukey <- TukeyHSD(anova)
-tukey_df <- as.data.frame(tukey$phenotype)
+tukey_df <- as.data.frame(tukey$stats)
 tukey_df <- mutate(tukey_df, Sig = case_when(`p adj` < 0.001 ~ "***",`p adj` > 0.001 & `p adj` < 0.01 ~ "**",
                                              `p adj` > 0.01 & `p adj` < 0.05 ~ "*", TRUE ~ "NS"))
-#write.table(tukey_df, file = "~/Google Drive/Kramer_et_al_AIO/Figures/ruby_aio_read_Count/end_at_3343/number_reads_ending_at_3343.all.pct.ANOVA.tukey.txt", quote=F, row.names = T, col.names=T, sep= "\t")
+write.table(tukey_df, file = "~/Google Drive/Kramer_et_al_AIO/Figures/ruby_aio_read_Count/lettuce/reads_mapping_to_RUBY.all.avg.bypheno.ANOVA.tukey.txt", quote=F, row.names = T, col.names=T, sep= "\t")
 print(tukey_df)
 ```
 
-    ##                           diff        lwr        upr      p adj Sig
-    ## 2fullRed-1red        17384.880  -57689.47 92459.2327 0.87773199  NS
-    ## 6fullGreen-1red     -54410.490 -129484.84 20663.8627 0.17210925  NS
-    ## 8green-1red         -56719.483 -131793.84 18354.8693 0.15031219  NS
-    ## 6fullGreen-2fullRed -71795.370 -146869.72  3278.9827 0.06089633  NS
-    ## 8green-2fullRed     -74104.363 -149178.72   969.9893 0.05299902  NS
-    ## 8green-6fullGreen    -2308.993  -77383.35 72765.3593 0.99962765  NS
+    ##                                             diff        lwr        upr
+    ## 35S_2fullRed-35S_1red               17384.880000  -31974.50  66744.258
+    ## 35S_6fullGreen-35S_1red            -54410.490000 -103769.87  -5051.112
+    ## 35S_8green-35S_1red                -56719.483333 -106078.86  -7360.105
+    ## AtUBQ_1red-35S_1red                -47478.653333  -96838.03   1880.725
+    ## AtUBQ_3redParts-35S_1red           -51850.813333 -101210.19  -2491.435
+    ## AtUBQ_4greenParts-35S_1red         -56164.430000 -105523.81  -6805.052
+    ## AtUBQ_8green-35S_1red              -56597.126667 -105956.50  -7237.749
+    ## LsUBQ_1red-35S_1red                -45013.720000  -94373.10   4345.658
+    ## LsUBQ_2fullRed-35S_1red            -44043.420000  -93402.80   5315.958
+    ## LsUBQ_6fullGreen-35S_1red          -56251.496667 -105610.87  -6892.119
+    ## LsUBQ_8green-35S_1red              -56723.866667 -106083.24  -7364.489
+    ## 35S_6fullGreen-35S_2fullRed        -71795.370000 -121154.75 -22435.992
+    ## 35S_8green-35S_2fullRed            -74104.363333 -123463.74 -24744.985
+    ## AtUBQ_1red-35S_2fullRed            -64863.533333 -114222.91 -15504.155
+    ## AtUBQ_3redParts-35S_2fullRed       -69235.693333 -118595.07 -19876.315
+    ## AtUBQ_4greenParts-35S_2fullRed     -73549.310000 -122908.69 -24189.932
+    ## AtUBQ_8green-35S_2fullRed          -73982.006667 -123341.38 -24622.629
+    ## LsUBQ_1red-35S_2fullRed            -62398.600000 -111757.98 -13039.222
+    ## LsUBQ_2fullRed-35S_2fullRed        -61428.300000 -110787.68 -12068.922
+    ## LsUBQ_6fullGreen-35S_2fullRed      -73636.376667 -122995.75 -24276.999
+    ## LsUBQ_8green-35S_2fullRed          -74108.746667 -123468.12 -24749.369
+    ## 35S_8green-35S_6fullGreen           -2308.993333  -51668.37  47050.385
+    ## AtUBQ_1red-35S_6fullGreen            6931.836667  -42427.54  56291.215
+    ## AtUBQ_3redParts-35S_6fullGreen       2559.676667  -46799.70  51919.055
+    ## AtUBQ_4greenParts-35S_6fullGreen    -1753.940000  -51113.32  47605.438
+    ## AtUBQ_8green-35S_6fullGreen         -2186.636667  -51546.01  47172.741
+    ## LsUBQ_1red-35S_6fullGreen            9396.770000  -39962.61  58756.148
+    ## LsUBQ_2fullRed-35S_6fullGreen       10367.070000  -38992.31  59726.448
+    ## LsUBQ_6fullGreen-35S_6fullGreen     -1841.006667  -51200.38  47518.371
+    ## LsUBQ_8green-35S_6fullGreen         -2313.376667  -51672.75  47046.001
+    ## AtUBQ_1red-35S_8green                9240.830000  -40118.55  58600.208
+    ## AtUBQ_3redParts-35S_8green           4868.670000  -44490.71  54228.048
+    ## AtUBQ_4greenParts-35S_8green          555.053333  -48804.32  49914.431
+    ## AtUBQ_8green-35S_8green               122.356667  -49237.02  49481.735
+    ## LsUBQ_1red-35S_8green               11705.763333  -37653.61  61065.141
+    ## LsUBQ_2fullRed-35S_8green           12676.063333  -36683.31  62035.441
+    ## LsUBQ_6fullGreen-35S_8green           467.986667  -48891.39  49827.365
+    ## LsUBQ_8green-35S_8green                -4.383333  -49363.76  49354.995
+    ## AtUBQ_3redParts-AtUBQ_1red          -4372.160000  -53731.54  44987.218
+    ## AtUBQ_4greenParts-AtUBQ_1red        -8685.776667  -58045.15  40673.601
+    ## AtUBQ_8green-AtUBQ_1red             -9118.473333  -58477.85  40240.905
+    ## LsUBQ_1red-AtUBQ_1red                2464.933333  -46894.44  51824.311
+    ## LsUBQ_2fullRed-AtUBQ_1red            3435.233333  -45924.14  52794.611
+    ## LsUBQ_6fullGreen-AtUBQ_1red         -8772.843333  -58132.22  40586.535
+    ## LsUBQ_8green-AtUBQ_1red             -9245.213333  -58604.59  40114.165
+    ## AtUBQ_4greenParts-AtUBQ_3redParts   -4313.616667  -53672.99  45045.761
+    ## AtUBQ_8green-AtUBQ_3redParts        -4746.313333  -54105.69  44613.065
+    ## LsUBQ_1red-AtUBQ_3redParts           6837.093333  -42522.28  56196.471
+    ## LsUBQ_2fullRed-AtUBQ_3redParts       7807.393333  -41551.98  57166.771
+    ## LsUBQ_6fullGreen-AtUBQ_3redParts    -4400.683333  -53760.06  44958.695
+    ## LsUBQ_8green-AtUBQ_3redParts        -4873.053333  -54232.43  44486.325
+    ## AtUBQ_8green-AtUBQ_4greenParts       -432.696667  -49792.07  48926.681
+    ## LsUBQ_1red-AtUBQ_4greenParts        11150.710000  -38208.67  60510.088
+    ## LsUBQ_2fullRed-AtUBQ_4greenParts    12121.010000  -37238.37  61480.388
+    ## LsUBQ_6fullGreen-AtUBQ_4greenParts    -87.066667  -49446.44  49272.311
+    ## LsUBQ_8green-AtUBQ_4greenParts       -559.436667  -49918.81  48799.941
+    ## LsUBQ_1red-AtUBQ_8green             11583.406667  -37775.97  60942.785
+    ## LsUBQ_2fullRed-AtUBQ_8green         12553.706667  -36805.67  61913.085
+    ## LsUBQ_6fullGreen-AtUBQ_8green         345.630000  -49013.75  49705.008
+    ## LsUBQ_8green-AtUBQ_8green            -126.740000  -49486.12  49232.638
+    ## LsUBQ_2fullRed-LsUBQ_1red             970.300000  -48389.08  50329.678
+    ## LsUBQ_6fullGreen-LsUBQ_1red        -11237.776667  -60597.15  38121.601
+    ## LsUBQ_8green-LsUBQ_1red            -11710.146667  -61069.52  37649.231
+    ## LsUBQ_6fullGreen-LsUBQ_2fullRed    -12208.076667  -61567.45  37151.301
+    ## LsUBQ_8green-LsUBQ_2fullRed        -12680.446667  -62039.82  36678.931
+    ## LsUBQ_8green-LsUBQ_6fullGreen        -472.370000  -49831.75  48887.008
+    ##                                           p adj Sig
+    ## 35S_2fullRed-35S_1red              0.9755579153  NS
+    ## 35S_6fullGreen-35S_1red            0.0220673925   *
+    ## 35S_8green-35S_1red                0.0149916882   *
+    ## AtUBQ_1red-35S_1red                0.0669616891  NS
+    ## AtUBQ_3redParts-35S_1red           0.0335828038   *
+    ## AtUBQ_4greenParts-35S_1red         0.0164615362   *
+    ## AtUBQ_8green-35S_1red              0.0153044587   *
+    ## LsUBQ_1red-35S_1red                0.0969436591  NS
+    ## LsUBQ_2fullRed-35S_1red            0.1116396629  NS
+    ## LsUBQ_6fullGreen-35S_1red          0.0162221679   *
+    ## LsUBQ_8green-35S_1red              0.0149805981   *
+    ## 35S_6fullGreen-35S_2fullRed        0.0010885538  **
+    ## 35S_8green-35S_2fullRed            0.0007243919 ***
+    ## AtUBQ_1red-35S_2fullRed            0.0036839553  **
+    ## AtUBQ_3redParts-35S_2fullRed       0.0017093630  **
+    ## AtUBQ_4greenParts-35S_2fullRed     0.0007988882 ***
+    ## AtUBQ_8green-35S_2fullRed          0.0007401919 ***
+    ## LsUBQ_1red-35S_2fullRed            0.0056612986  **
+    ## LsUBQ_2fullRed-35S_2fullRed        0.0066982345  **
+    ## LsUBQ_6fullGreen-35S_2fullRed      0.0007867140 ***
+    ## LsUBQ_8green-35S_2fullRed          0.0007238322 ***
+    ## 35S_8green-35S_6fullGreen          1.0000000000  NS
+    ## AtUBQ_1red-35S_6fullGreen          0.9999939647  NS
+    ## AtUBQ_3redParts-35S_6fullGreen     0.9999999999  NS
+    ## AtUBQ_4greenParts-35S_6fullGreen   1.0000000000  NS
+    ## AtUBQ_8green-35S_6fullGreen        1.0000000000  NS
+    ## LsUBQ_1red-35S_6fullGreen          0.9998747095  NS
+    ## LsUBQ_2fullRed-35S_6fullGreen      0.9996806790  NS
+    ## LsUBQ_6fullGreen-35S_6fullGreen    1.0000000000  NS
+    ## LsUBQ_8green-35S_6fullGreen        1.0000000000  NS
+    ## AtUBQ_1red-35S_8green              0.9998934286  NS
+    ## AtUBQ_3redParts-35S_8green         0.9999998494  NS
+    ## AtUBQ_4greenParts-35S_8green       1.0000000000  NS
+    ## AtUBQ_8green-35S_8green            1.0000000000  NS
+    ## LsUBQ_1red-35S_8green              0.9990245247  NS
+    ## LsUBQ_2fullRed-35S_8green          0.9980266976  NS
+    ## LsUBQ_6fullGreen-35S_8green        1.0000000000  NS
+    ## LsUBQ_8green-35S_8green            1.0000000000  NS
+    ## AtUBQ_3redParts-AtUBQ_1red         0.9999999521  NS
+    ## AtUBQ_4greenParts-AtUBQ_1red       0.9999417890  NS
+    ## AtUBQ_8green-AtUBQ_1red            0.9999063620  NS
+    ## LsUBQ_1red-AtUBQ_1red              0.9999999999  NS
+    ## LsUBQ_2fullRed-AtUBQ_1red          0.9999999964  NS
+    ## LsUBQ_6fullGreen-AtUBQ_1red        0.9999357980  NS
+    ## LsUBQ_8green-AtUBQ_1red            0.9998929378  NS
+    ## AtUBQ_4greenParts-AtUBQ_3redParts  0.9999999585  NS
+    ## AtUBQ_8green-AtUBQ_3redParts       0.9999998851  NS
+    ## LsUBQ_1red-AtUBQ_3redParts         0.9999947585  NS
+    ## LsUBQ_2fullRed-AtUBQ_3redParts     0.9999798303  NS
+    ## LsUBQ_6fullGreen-AtUBQ_3redParts   0.9999999487  NS
+    ## LsUBQ_8green-AtUBQ_3redParts       0.9999998480  NS
+    ## AtUBQ_8green-AtUBQ_4greenParts     1.0000000000  NS
+    ## LsUBQ_1red-AtUBQ_4greenParts       0.9993723588  NS
+    ## LsUBQ_2fullRed-AtUBQ_4greenParts   0.9986682512  NS
+    ## LsUBQ_6fullGreen-AtUBQ_4greenParts 1.0000000000  NS
+    ## LsUBQ_8green-AtUBQ_4greenParts     1.0000000000  NS
+    ## LsUBQ_1red-AtUBQ_8green            0.9991126591  NS
+    ## LsUBQ_2fullRed-AtUBQ_8green        0.9981866315  NS
+    ## LsUBQ_6fullGreen-AtUBQ_8green      1.0000000000  NS
+    ## LsUBQ_8green-AtUBQ_8green          1.0000000000  NS
+    ## LsUBQ_2fullRed-LsUBQ_1red          1.0000000000  NS
+    ## LsUBQ_6fullGreen-LsUBQ_1red        0.9993260840  NS
+    ## LsUBQ_8green-LsUBQ_1red            0.9990212349  NS
+    ## LsUBQ_6fullGreen-LsUBQ_2fullRed    0.9985811258  NS
+    ## LsUBQ_8green-LsUBQ_2fullRed        0.9980207571  NS
+    ## LsUBQ_8green-LsUBQ_6fullGreen      1.0000000000  NS
 
 ``` r
 ## Assign letters for plot
 cld <- multcompLetters4(anova, tukey)
-Tk <- group_by(all.RUBY2, phenotype) %>%
+Tk <- group_by(all.RUBY2,stats, phenotype,class,promoter) %>%
   summarise(mean=mean(normTotal), quant = quantile(normTotal, probs = 0.75)) %>%
   arrange(desc(mean))
-
-# extracting the compact letter display and adding to the Tk table
-cld <- as.data.frame.list(cld$phenotype)
-Tk$cld <- cld$Letters
-
-all.RUBY2 %>% group_by(phenotype,class) %>% 
-  dplyr::summarize(avg = mean(normTotal), sem = sd(normTotal)/sqrt(n()), numBR = n())  %>%
-  ggplot(aes(x=phenotype,y=avg,fill=phenotype)) + 
-  geom_col(position=position_dodge(0.9),color=NA)+ 
-  geom_jitter(data=all.RUBY2,aes(x=phenotype,y=normTotal),width =0.2,size=0.5)+
-  scale_y_continuous(labels=scales::label_number(scale_cut = cut_short_scale())) +
-  geom_errorbar(aes(ymin=avg-sem, ymax=avg+sem), width=0.4,position=position_dodge(0.9),lineend="round")+
-  theme_bw()+themes + scale_fill_manual(values=c(phenoColors))  + 
-  ggtitle("Figure 7B - All Reads") + ylab("Normalized # reads") + 
-  geom_text(aes(label=numBR),y = 0)+ theme(legend.position="none")+
-  geom_text(data=Tk,aes(x=phenotype,y=mean,label=cld), size = 3, vjust=-1, hjust =-1)
 ```
 
-    ## `summarise()` has grouped output by 'phenotype'. You can override using the
-    ## `.groups` argument.
+    ## `summarise()` has grouped output by 'stats', 'phenotype', 'class'. You can
+    ## override using the `.groups` argument.
+
+``` r
+# extracting the compact letter display and adding to the Tk table
+cld <- as.data.frame.list(cld$stats)
+Tk$cld <- cld$Letters
+
+all.RUBY2 %>% group_by(phenotype,class,promoter) %>% 
+  dplyr::summarize(avg = mean(normTotal), numBR = n(), sem = sd(normTotal)/sqrt(n()))  %>% 
+  ggplot(aes(x=phenotype,y=avg,fill=phenotype)) + 
+  geom_col(position=position_dodge(0.9),aes(color=phenotype))+ 
+  geom_jitter(data=all.RUBY2,aes(x=phenotype,y=normTotal),width =0.2,size=0.5)+
+  scale_y_continuous(labels=scales::label_number(scale_cut = cut_short_scale())) +
+  geom_errorbar(aes(ymin=avg-sem, ymax=avg+sem),color='black', width=0.3,position=position_dodge(0.9),linewidth=0.3,lineend="round")+
+  themes + scale_fill_manual(values=c(phenoColors)) + scale_color_manual(values=c(phenoColors)) + 
+  ggtitle("Number of reads ") + ylab("Normalized # reads") + 
+  geom_text(aes(label=numBR),y = 0) +theme(legend.position="none")+
+  geom_text(data=Tk,aes(x=phenotype,y=quant,label=cld), size = 3, vjust=-1, hjust =-1)+
+  facet_nested(~promoter,scales="free_x",space="free",labeller=label_wrap_gen(width = 5, multi_line = TRUE))+
+  ggtitle("Figure 7B: Number of RUBY reads in Lettuce")
+```
+
+    ## `summarise()` has grouped output by 'phenotype', 'class'. You can override
+    ## using the `.groups` argument.
 
 ![](Figure_7_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
@@ -367,200 +469,7 @@ ggplot(data3,aes(x=pheno,y=merge_normScore,fill=pheno))   +
 
 ![](Figure_7_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
-## Figure 7D - Coverage plots in lettuce
-
-``` r
-## load gtf for transgene
-infoFile <- "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_coverage_plots/35S_RUBY_transgene.bed"
-geneInfo <-read.table(infoFile,col.names = c("molecule","Start","End","Name","Type","strand"))
-target <- "35S_RUBY_transgene"
-t<- geneInfo %>% rowwise() %>% transmute(molecule,Name,Type,Start=Start +1,End=End+1,
-                                         Strand =ifelse(strand=="+","forward","reverse"),length=End-Start+1,
-                                         orientation=ifelse(strand=="+",1, -1)) %>%
-  filter(Name != "RB") %>% mutate(Name = case_when(Name == "CaMV_35S_promoter" ~ "35S",Name == "HSP18.2_terminator" ~ "HSP18.2",
-                                                   Name == "Glucosyltransferase" ~ "GT",TRUE~Name))
-
-tg <- ggplot(t,aes(xmin = Start, xmax = End, y = molecule,forward=orientation,label=Name)) +
-  geom_gene_arrow(arrow_body_height = grid::unit(4, "mm"),arrowhead_height = unit(4, "mm"), arrowhead_width = unit(1, "mm"),
-                  fill = dplyr::case_when(t$Type=="terminator"~ "red",
-                                          t$Type=="promoter"~ "green",
-                                          t$Name=="P2A"~ "gray",
-                                          t$Name=="CYP76AD1"~ "yellow",
-                                          t$Name=="DODA"~ "cyan1",
-                                          t$Name=="GT"~ "blue",TRUE ~ "white"),
-                  color = "black") + 
-  xlab("Relative position along transgene")+scale_x_continuous(label=scales::label_comma())+
-  geom_gene_label(fontface="bold", padding.y = grid::unit(0.01,"mm"), padding.x = grid::unit(0.2,"mm"),align = "left",
-                  color=c("black","black","black","black","black","white","black"),grow=F,size=6) +
-  theme(axis.ticks.y=element_blank(), axis.text.y= element_blank(),
-        axis.text.x= element_text(color = 'black',size = 6),
-        axis.title.y= element_blank(), 
-        axis.line.x=element_line(color = 'black',linewidth=0.3,lineend="round"),panel.background = element_blank(),
-        axis.title.x=element_blank(),axis.ticks.x=element_line(color='black',linewidth=0.3,lineend="round"))+
-  annotate(geom="text",x=2240,y=1.5,label="P2A",size=2)+annotate(geom="text",x=3130,y=1.5,label="P2A",size=2)+
-  annotate(geom="text",x=4780,y=1.5,label="HSP18.2",size=2)
-
-
-## Always Red
-fileName.red <- "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_coverage_plots.lettuce/bed12_files/Ls745_rep78_Ls608_rep9.35S.1red.rRNA_free.mapped_to_targets.non_pA"
-
-## non_pA
-coverage.red <- read.table(paste(fileName.red,".bed12",sep=""),col.names = c("name","start", "stop","name2","foo","strand","blockStart","blockStop","food2","blockNum","blockLen","relStart","scores"))
-fivep.red <- read.table(paste(fileName.red,".5p.bed12",sep=""),col.names = c("name","start", "stop","name2","foo","strand","blockStart","blockStop","food2","blockNum","blockLen","relStart","scores"))
-threep.red <- read.table(paste(fileName.red,".3p.bed12",sep=""),col.names = c("name","start", "stop","name2","foo","strand","blockStart","blockStop","food2","blockNum","blockLen","relStart","scores"))
-
-## pA
-coverage_pA.red <- read.table(paste(str_replace(fileName.red,"non_pA","pA"), ".bed12",sep=""),col.names = c("name","start", "stop","name2","foo","strand","blockStart","blockStop","food2","blockNum","blockLen","relStart","scores"))
-fivep_pA.red <- read.table(paste(str_replace(fileName.red,"non_pA","pA"), ".5p.bed12",sep=""),col.names = c("name","start", "stop","name2","foo","strand","blockStart","blockStop","food2","blockNum","blockLen","relStart","scores"))
-threep_pA.red <- read.table(paste(str_replace(fileName.red,"non_pA","pA"), ".3p.bed12",sep=""),col.names = c("name","start", "stop","name2","foo","strand","blockStart","blockStop","food2","blockNum","blockLen","relStart","scores"))
-
-##### Filter bed12 to only contain gene of interest, and convert score list to lsit of integers
-## Convert to file to plot, 3 rows, txt, nt, and score
-covScores.red <- tibble(coverage.red %>% filter(grepl(target,name))) %>% mutate(scores = lapply(str_split(scores,","),as.integer))%>% rowwise() %>% mutate(nts = list(seq.int(start,stop-1))) %>% select(name,nts,scores) %>% unnest_longer(c(scores,nts))
-fivepScores.red <- tibble(fivep.red %>% filter(grepl(target,name))) %>% mutate(scores = lapply(str_split(scores,","),as.integer))%>% rowwise() %>% mutate(nts = list(seq.int(start,stop-1))) %>% select(name,nts,scores) %>% unnest_longer(c(scores,nts))
-threepScores.red <- tibble(threep.red %>% filter(grepl(target,name))) %>% mutate(scores = lapply(str_split(scores,","),as.integer))%>% rowwise() %>% mutate(nts = list(seq.int(start,stop-1))) %>% select(name,nts,scores) %>% unnest_longer(c(scores,nts))
-
-covScores_pA.red <- tibble(coverage_pA.red %>% filter(grepl(target,name))) %>% mutate(scores = lapply(str_split(scores,","),as.integer))%>% rowwise() %>% mutate(nts = list(seq.int(start,stop-1))) %>% select(name,nts,scores) %>% unnest_longer(c(scores,nts))
-fivepScores_pA.red <- tibble(fivep_pA.red %>% filter(grepl(target,name))) %>% mutate(scores = lapply(str_split(scores,","),as.integer))%>% rowwise() %>% mutate(nts = list(seq.int(start,stop-1))) %>% select(name,nts,scores) %>% unnest_longer(c(scores,nts))
-threepScores_pA.red <- tibble(threep_pA.red %>% filter(grepl(target,name))) %>% mutate(scores = lapply(str_split(scores,","),as.integer))%>% rowwise() %>% mutate(nts = list(seq.int(start,stop-1))) %>% select(name,nts,scores) %>% unnest_longer(c(scores,nts))
-
-## plot non_pA
-themes<-theme(axis.ticks.length=unit(0.0516,"in"),
-              axis.title.x=element_blank(),
-              axis.text.x= element_blank(),
-              axis.text.y= element_text(color = 'black',size = 8,hjust=0.5),
-              axis.line=element_line(color='black',linewidth=0.3,lineend="round"),
-              axis.ticks=element_line(color='black',linewidth=0.3,lineend="round"),
-              line = element_line(color = 'black',linewidth=0.3,lineend="round"),
-              axis.title.y = element_text(color = 'black',size = 8),
-              panel.background = element_blank(),
-              panel.grid.major = element_line(color = 'grey95'),
-              panel.grid.minor = element_line(color = 'grey95'))
-
-maxCov.red <- max(covScores.red$scores)
-covPlot.red<- ggplot(covScores.red, aes(x=nts,y=scores))+ geom_area(stat="identity",color="blue",fill="blue") + ylab("\nTotal")+  themes +   scale_y_continuous(breaks=seq(0,maxCov.red,maxCov.red),labels=scales::label_number(scale_cut = cut_short_scale()))
-maxfiveP.red <- max(fivepScores.red$scores)
-fivepPlot.red <-ggplot(fivepScores.red, aes(x=nts,y=scores))+ geom_area(stat="identity",color="blue",fill="blue")+ ylab("5'\nends")+  themes+   scale_y_continuous(breaks=seq(0,maxfiveP.red,maxfiveP.red),labels=scales::label_number(scale_cut = cut_short_scale()))
-maxthreeP.red <- max(threepScores.red$scores)
-threepPlot.red <-ggplot(threepScores.red, aes(x=nts,y=scores))+ geom_area(stat="identity",color="blue",fill="blue")+ ylab("3'\nends")+  themes+scale_y_continuous(breaks=seq(0,maxthreeP.red,maxthreeP.red),labels=scales::label_number(scale_cut = cut_short_scale()))
-
-
-## plot pA
-maxCov_pA.red <- max(covScores_pA.red$scores)
-covPlot_pA.red<- ggplot(covScores_pA.red, aes(x=nts,y=scores))+ geom_area(stat="identity",color="red",fill="red") + ylab("\nTotal")+  themes+  scale_y_continuous(breaks=seq(0,maxCov_pA.red,maxCov_pA.red),labels=scales::label_number(scale_cut = cut_short_scale()))
-
-red_TSS.red <- filter(fivepScores_pA.red,nts == 709)
-maxfiveP_pA.red <- max(fivepScores_pA.red$scores)
-fivepPlot_pA.red <-ggplot(fivepScores_pA.red, aes(x=nts,y=scores))+ geom_area(stat="identity",linewidth=0.5,color="red",fill="red")+ ylab("5'\nends")+themes+scale_y_continuous(breaks=seq(0,maxfiveP_pA.red,maxfiveP_pA.red),labels=scales::label_number(scale_cut = cut_short_scale())) + geom_text_repel(data=red_TSS.red,seed=1234,inherit.aes = F, aes(x=nts, y=scores,label=scales::comma(scores)),size=2,nudge_x = 500,arrow=arrow(ends="last",type="open",length = unit(0.1,"in")))
-maxthreeP_pA.red <- max(threepScores_pA.red$scores)
-threepPlot_pA.red <-ggplot(threepScores_pA.red, aes(x=nts,y=scores))+ geom_area(stat="identity",color="red",fill="red")+ ylab("3'\nends ")+  themes+  scale_y_continuous(breaks=seq(0,maxthreeP_pA.red,maxthreeP_pA.red),labels=scales::label_number(scale_cut = cut_short_scale()))
-
-
-
-## Full Red
-fileName.fullRed <- "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_coverage_plots.lettuce/bed12_files/Ls745_rep6.Ls608_rep45.35S.5fullRed.rRNA_free.mapped_to_targets.non_pA"
-
-## non_pA
-coverage.fullRed <- read.table(paste(fileName.fullRed,".bed12",sep=""),col.names = c("name","start", "stop","name2","foo","strand","blockStart","blockStop","food2","blockNum","blockLen","relStart","scores"))
-fivep.fullRed <- read.table(paste(fileName.fullRed,".5p.bed12",sep=""),col.names = c("name","start", "stop","name2","foo","strand","blockStart","blockStop","food2","blockNum","blockLen","relStart","scores"))
-threep.fullRed <- read.table(paste(fileName.fullRed,".3p.bed12",sep=""),col.names = c("name","start", "stop","name2","foo","strand","blockStart","blockStop","food2","blockNum","blockLen","relStart","scores"))
-
-## pA
-coverage_pA.fullRed <- read.table(paste(str_replace(fileName.fullRed,"non_pA","pA"), ".bed12",sep=""),col.names = c("name","start", "stop","name2","foo","strand","blockStart","blockStop","food2","blockNum","blockLen","relStart","scores"))
-fivep_pA.fullRed <- read.table(paste(str_replace(fileName.fullRed,"non_pA","pA"), ".5p.bed12",sep=""),col.names = c("name","start", "stop","name2","foo","strand","blockStart","blockStop","food2","blockNum","blockLen","relStart","scores"))
-threep_pA.fullRed <- read.table(paste(str_replace(fileName.fullRed,"non_pA","pA"), ".3p.bed12",sep=""),col.names = c("name","start", "stop","name2","foo","strand","blockStart","blockStop","food2","blockNum","blockLen","relStart","scores"))
-
-##### Filter bed12 to only contain gene of interest, and convert score list to lsit of integers
-## Convert to file to plot, 3 rows, txt, nt, and score
-covScores.fullRed <- tibble(coverage.fullRed %>% filter(grepl(target,name))) %>% mutate(scores = lapply(str_split(scores,","),as.integer))%>% rowwise() %>% mutate(nts = list(seq.int(start,stop-1))) %>% select(name,nts,scores) %>% unnest_longer(c(scores,nts))
-fivepScores.fullRed <- tibble(fivep.fullRed %>% filter(grepl(target,name))) %>% mutate(scores = lapply(str_split(scores,","),as.integer))%>% rowwise() %>% mutate(nts = list(seq.int(start,stop-1))) %>% select(name,nts,scores) %>% unnest_longer(c(scores,nts))
-threepScores.fullRed <- tibble(threep.fullRed %>% filter(grepl(target,name))) %>% mutate(scores = lapply(str_split(scores,","),as.integer))%>% rowwise() %>% mutate(nts = list(seq.int(start,stop-1))) %>% select(name,nts,scores) %>% unnest_longer(c(scores,nts))
-
-covScores_pA.fullRed <- tibble(coverage_pA.fullRed %>% filter(grepl(target,name))) %>% mutate(scores = lapply(str_split(scores,","),as.integer))%>% rowwise() %>% mutate(nts = list(seq.int(start,stop-1))) %>% select(name,nts,scores) %>% unnest_longer(c(scores,nts))
-fivepScores_pA.fullRed <- tibble(fivep_pA.fullRed %>% filter(grepl(target,name))) %>% mutate(scores = lapply(str_split(scores,","),as.integer))%>% rowwise() %>% mutate(nts = list(seq.int(start,stop-1))) %>% select(name,nts,scores) %>% unnest_longer(c(scores,nts))
-threepScores_pA.fullRed <- tibble(threep_pA.fullRed %>% filter(grepl(target,name))) %>% mutate(scores = lapply(str_split(scores,","),as.integer))%>% rowwise() %>% mutate(nts = list(seq.int(start,stop-1))) %>% select(name,nts,scores) %>% unnest_longer(c(scores,nts))
-
-## Plots
-maxCov.fullRed <- max(covScores.fullRed$scores)
-covPlot.fullRed<- ggplot(covScores.fullRed, aes(x=nts,y=scores))+ geom_area(stat="identity",color="blue",fill="blue") + ylab("\nTotal")+  themes +   scale_y_continuous(breaks=seq(0,maxCov.fullRed,maxCov.fullRed),labels=scales::label_number(scale_cut = cut_short_scale()))
-maxfiveP.fullRed <- max(fivepScores.fullRed$scores)
-fivepPlot.fullRed <-ggplot(fivepScores.fullRed, aes(x=nts,y=scores))+ geom_area(stat="identity",color="blue",fill="blue")+ ylab("5'\nends")+  themes+   scale_y_continuous(breaks=seq(0,maxfiveP.fullRed,maxfiveP.fullRed),labels=scales::label_number(scale_cut = cut_short_scale()))
-maxthreeP.fullRed <- max(threepScores.fullRed$scores)
-threepPlot.fullRed <-ggplot(threepScores.fullRed, aes(x=nts,y=scores))+ geom_area(stat="identity",color="blue",fill="blue")+ ylab("3'\nends")+  themes+scale_y_continuous(breaks=seq(0,maxthreeP.fullRed,maxthreeP.fullRed),labels=scales::label_number(scale_cut = cut_short_scale()))
-
-
-## plot pA
-maxCov_pA.fullRed <- max(covScores_pA.fullRed$scores)
-covPlot_pA.fullRed<- ggplot(covScores_pA.fullRed, aes(x=nts,y=scores))+ geom_area(stat="identity",color="red",fill="red") + ylab("\nTotal")+  themes+  scale_y_continuous(breaks=seq(0,maxCov_pA.fullRed,maxCov_pA.fullRed),labels=scales::label_number(scale_cut = cut_short_scale()))
-
-fullRed_TSS.fullRed <- filter(fivepScores_pA.fullRed,nts == 709)
-maxfiveP_pA.fullRed <- max(fivepScores_pA.fullRed$scores)
-fivepPlot_pA.fullRed <-ggplot(fivepScores_pA.fullRed, aes(x=nts,y=scores))+ geom_area(stat="identity",linewidth=0.5,color="red",fill="red")+ ylab("5'\nends")+themes+scale_y_continuous(breaks=seq(0,maxfiveP_pA.fullRed,maxfiveP_pA.fullRed),labels=scales::label_number(scale_cut = cut_short_scale())) + geom_text_repel(data=fullRed_TSS.fullRed,seed=1234,inherit.aes = F, aes(x=nts, y=scores,label=scales::comma(scores)),size=2,nudge_x = 500,arrow=arrow(ends="last",type="open",length = unit(0.1,"in")))
-maxthreeP_pA.fullRed <- max(threepScores_pA.fullRed$scores)
-threepPlot_pA.fullRed <-ggplot(threepScores_pA.fullRed, aes(x=nts,y=scores))+ geom_area(stat="identity",color="red",fill="red")+ ylab("3'\nends ")+  themes+  scale_y_continuous(breaks=seq(0,maxthreeP_pA.fullRed,maxthreeP_pA.fullRed),labels=scales::label_number(scale_cut = cut_short_scale()))
-
-
-## Full Green
-fileName.fullGreen <- "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_coverage_plots.lettuce/bed12_files/Ls745_rep6.Ls608_rep45.35S.6fullGreen.rRNA_free.mapped_to_targets.non_pA"
-
-## non_pA
-coverage.fullGreen <- read.table(paste(fileName.fullGreen,".bed12",sep=""),col.names = c("name","start", "stop","name2","foo","strand","blockStart","blockStop","food2","blockNum","blockLen","relStart","scores"))
-fivep.fullGreen <- read.table(paste(fileName.fullGreen,".5p.bed12",sep=""),col.names = c("name","start", "stop","name2","foo","strand","blockStart","blockStop","food2","blockNum","blockLen","relStart","scores"))
-threep.fullGreen <- read.table(paste(fileName.fullGreen,".3p.bed12",sep=""),col.names = c("name","start", "stop","name2","foo","strand","blockStart","blockStop","food2","blockNum","blockLen","relStart","scores"))
-
-## pA
-coverage_pA.fullGreen <- read.table(paste(str_replace(fileName.fullGreen,"non_pA","pA"), ".bed12",sep=""),col.names = c("name","start", "stop","name2","foo","strand","blockStart","blockStop","food2","blockNum","blockLen","relStart","scores"))
-fivep_pA.fullGreen <- read.table(paste(str_replace(fileName.fullGreen,"non_pA","pA"), ".5p.bed12",sep=""),col.names = c("name","start", "stop","name2","foo","strand","blockStart","blockStop","food2","blockNum","blockLen","relStart","scores"))
-threep_pA.fullGreen <- read.table(paste(str_replace(fileName.fullGreen,"non_pA","pA"), ".3p.bed12",sep=""),col.names = c("name","start", "stop","name2","foo","strand","blockStart","blockStop","food2","blockNum","blockLen","relStart","scores"))
-
-##### Filter bed12 to only contain gene of interest, and convert score list to lsit of integers
-## Convert to file to plot, 3 rows, txt, nt, and score
-covScores.fullGreen <- tibble(coverage.fullGreen %>% filter(grepl(target,name))) %>% mutate(scores = lapply(str_split(scores,","),as.integer))%>% rowwise() %>% mutate(nts = list(seq.int(start,stop-1))) %>% select(name,nts,scores) %>% unnest_longer(c(scores,nts))
-fivepScores.fullGreen <- tibble(fivep.fullGreen %>% filter(grepl(target,name))) %>% mutate(scores = lapply(str_split(scores,","),as.integer))%>% rowwise() %>% mutate(nts = list(seq.int(start,stop-1))) %>% select(name,nts,scores) %>% unnest_longer(c(scores,nts))
-threepScores.fullGreen <- tibble(threep.fullGreen %>% filter(grepl(target,name))) %>% mutate(scores = lapply(str_split(scores,","),as.integer))%>% rowwise() %>% mutate(nts = list(seq.int(start,stop-1))) %>% select(name,nts,scores) %>% unnest_longer(c(scores,nts))
-
-covScores_pA.fullGreen <- tibble(coverage_pA.fullGreen %>% filter(grepl(target,name))) %>% mutate(scores = lapply(str_split(scores,","),as.integer))%>% rowwise() %>% mutate(nts = list(seq.int(start,stop-1))) %>% select(name,nts,scores) %>% unnest_longer(c(scores,nts))
-fivepScores_pA.fullGreen <- tibble(fivep_pA.fullGreen %>% filter(grepl(target,name))) %>% mutate(scores = lapply(str_split(scores,","),as.integer))%>% rowwise() %>% mutate(nts = list(seq.int(start,stop-1))) %>% select(name,nts,scores) %>% unnest_longer(c(scores,nts))
-threepScores_pA.fullGreen <- tibble(threep_pA.fullGreen %>% filter(grepl(target,name))) %>% mutate(scores = lapply(str_split(scores,","),as.integer))%>% rowwise() %>% mutate(nts = list(seq.int(start,stop-1))) %>% select(name,nts,scores) %>% unnest_longer(c(scores,nts))
-
-## Plots
-maxCov.fullGreen <- max(covScores.fullGreen$scores)
-covPlot.fullGreen<- ggplot(covScores.fullGreen, aes(x=nts,y=scores))+ geom_area(stat="identity",color="blue",fill="blue") + ylab("\nTotal")+  themes +   scale_y_continuous(breaks=seq(0,maxCov.fullGreen,maxCov.fullGreen),labels=scales::label_number(scale_cut = cut_short_scale()))
-maxfiveP.fullGreen <- max(fivepScores.fullGreen$scores)
-fivepPlot.fullGreen <-ggplot(fivepScores.fullGreen, aes(x=nts,y=scores))+ geom_area(stat="identity",color="blue",fill="blue")+ ylab("5'\nends")+  themes+   scale_y_continuous(breaks=seq(0,maxfiveP.fullGreen,maxfiveP.fullGreen),labels=scales::label_number(scale_cut = cut_short_scale()))
-maxthreeP.fullGreen <- max(threepScores.fullGreen$scores)
-threepPlot.fullGreen <-ggplot(threepScores.fullGreen, aes(x=nts,y=scores))+ geom_area(stat="identity",color="blue",fill="blue")+ ylab("3'\nends")+  themes+scale_y_continuous(breaks=seq(0,maxthreeP.fullGreen,maxthreeP.fullGreen),labels=scales::label_number(scale_cut = cut_short_scale()))
-
-
-## plot pA
-maxCov_pA.fullGreen <- max(covScores_pA.fullGreen$scores)
-covPlot_pA.fullGreen<- ggplot(covScores_pA.fullGreen, aes(x=nts,y=scores))+ geom_area(stat="identity",color="red",fill="red") + ylab("\nTotal")+  themes+  scale_y_continuous(breaks=seq(0,maxCov_pA.fullGreen,maxCov_pA.fullGreen),labels=scales::label_number(scale_cut = cut_short_scale()))
-
-fullGreen_TSS.fullGreen <- filter(fivepScores_pA.fullGreen,nts == 709)
-maxfiveP_pA.fullGreen <- max(fivepScores_pA.fullGreen$scores)
-fivepPlot_pA.fullGreen <-ggplot(fivepScores_pA.fullGreen, aes(x=nts,y=scores))+ geom_area(stat="identity",linewidth=0.5,color="red",fill="red")+ ylab("5'\nends")+themes+scale_y_continuous(breaks=seq(0,maxfiveP_pA.fullGreen,maxfiveP_pA.fullGreen),labels=scales::label_number(scale_cut = cut_short_scale())) + geom_text_repel(data=fullGreen_TSS.fullGreen,seed=1234,inherit.aes = F, aes(x=nts, y=scores,label=scales::comma(scores)),size=2,nudge_x = 500,arrow=arrow(ends="last",type="open",length = unit(0.1,"in")))
-maxthreeP_pA.fullGreen <- max(threepScores_pA.fullGreen$scores)
-threepPlot_pA.fullGreen <-ggplot(threepScores_pA.fullGreen, aes(x=nts,y=scores))+ geom_area(stat="identity",color="red",fill="red")+ ylab("3'\nends ")+  themes+  scale_y_continuous(breaks=seq(0,maxthreeP_pA.fullGreen,maxthreeP_pA.fullGreen),labels=scales::label_number(scale_cut = cut_short_scale()))
-
-## Combine plots
-all <- ggarrange(covPlot.red,covPlot.fullRed+ rremove("y.title"),covPlot.fullGreen+ rremove("y.title"),
-          fivepPlot.red,fivepPlot.fullRed+ rremove("y.title"),fivepPlot.fullGreen+ rremove("y.title"),
-          threepPlot.red,threepPlot.fullRed+ rremove("y.title"),threepPlot.fullGreen+ rremove("y.title"),
-          tg,tg,tg,
-          covPlot_pA.red,covPlot_pA.fullRed+ rremove("y.title"),covPlot_pA.fullGreen+ rremove("y.title"),
-          fivepPlot_pA.red,fivepPlot_pA.fullRed+ rremove("y.title"),fivepPlot_pA.fullGreen+ rremove("y.title"),
-          threepPlot_pA.red,threepPlot_pA.fullRed+ rremove("y.title"),threepPlot_pA.fullGreen+ rremove("y.title"),
-          ncol=3,nrow=7,align="v",labels=c("Always Red (N=3)","Fully Red (N=3)","Full Green (N=3)"),
-          hjust=-1,  font.label = list(size=8,face="bold"))
-
-allFinal <- annotate_figure(all, right = text_grob("polyA- Reads",color='blue',rot=270,vjust=-1,hjust=1.5,size=8),top="Figure 7D")
-
-annotate_figure(allFinal,right = text_grob("polyA+ Reads",color='red',rot=270,hjust=-1.4,vjust=1.5,size=8))
-```
-
-![](Figure_7_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
-
-## Figure 7E - Reads ending at GTc.171 in lettuce
+## Figure 7D - Reads ending at GTc.171 in lettuce
 
 ``` r
 inNorm <- read.table("/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_aio_read_Count/lettuce/number_reads_mapped.ruby_round4.txt",header = TRUE)
@@ -631,14 +540,166 @@ pctReads  %>% group_by(Promoter,Phenotype) %>%
   geom_text(aes(label=numBR,y=0),size=2)+
   scale_y_continuous(labels=scales::label_number(scale_cut = cut_short_scale())) +
   themes + scale_fill_manual(values=phenoColors)  + 
-  ggtitle("Figure 7E- Percentage of polyA- reads\nending at GTc.171") + ylab("Percentage of polyA- reads") + theme(axis.title.x=element_blank(),legend.position="none")+
+  ggtitle("Figure 7D- Percentage of polyA- reads\nending at GTc.171") + ylab("Percentage of polyA- reads") + theme(axis.title.x=element_blank(),legend.position="none")+
   geom_text(data=Tk,aes(x=Phenotype,y=mean,label=cld), size = 3, vjust=-1, hjust =-1)
 ```
 
     ## `summarise()` has grouped output by 'Promoter'. You can override using the
     ## `.groups` argument.
 
+![](Figure_7_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+## Figure 7F - number of reads beginning before/after GTc.171
+
+``` r
+## Set themes
+themes <- theme(plot.title = element_text(size=8,color='black',hjust = 0.5),
+                axis.text = element_text(size=8,color = 'black'),
+                axis.title.x = element_blank(),
+                axis.title.y = element_text(color = "black",size=8),
+                strip.text = element_text(color = "black",size=8),
+                legend.position = 'top',
+                legend.key.size= unit(0.3,"cm"),
+                legend.text = element_text(color = "black",size=6),
+                legend.title = element_text(color = "black",size=6),
+                line = element_line(color = 'black',linewidth=0.3,lineend="round"),
+                axis.line=element_line(color='black',linewidth=0.3,lineend="round"),
+                axis.ticks.length=unit(0.0516,"in"),
+                axis.ticks=element_line(color='black',linewidth=0.3,lineend="round"),
+                panel.background = element_blank(),
+                panel.grid.major = element_line(color = 'grey95'),
+                panel.grid.minor = element_line(color = 'grey95'))
+
+
+inNorm <- read.table("/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_aio_read_Count/number_reads_mapped.ruby_rounds1235.txt",header = TRUE)
+norm <- inNorm %>% transmute(sample, MapTotal = rRNA+Targets+Non_targets) 
+
+## Read in data
+inFile.round1 <- read.table("/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_5p_counts_around_3343/all_samples.ruby_round1.reads_up_dnstream_3343.txt",col.names=c("Count","Sample","ReadType","Location"))
+inFile.round2 <- read.table("/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_5p_counts_around_3343/all_samples.ruby_round2.reads_up_dnstream_3343.txt",col.names=c("Count","Sample","ReadType","Location"))
+inFile.round5 <- read.table("/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_5p_counts_around_3343/all_samples.ruby_round5.reads_up_dnstream_3343.txt",col.names=c("Count","Sample","ReadType","Location"))
+
+
+toPlot <- rbind(inFile.round1,inFile.round2,inFile.round5) %>% left_join(norm,by=c("Sample"="sample")) %>%
+  mutate(normCount = case_when(Location == "dnstream"~ (Count / (MapTotal*1338))*1000000, Location == "upstream" ~ (Count / (MapTotal*2618))*1000000)) %>%
+  separate(Sample, into=c("Genotype","Promoter","Phenotype"),sep="[.]") %>% filter(Phenotype != "7green") %>%
+  mutate(Phenotype = case_when(Promoter == "35S_dcl1234" ~ "0red",Phenotype == "2reddish" ~ "1red", Phenotype == "5fullRed" ~ "2fullRed", TRUE ~ Phenotype),
+         Location = case_when(Location=="upstream" ~ "1upstream",TRUE ~ "2dnstream")) 
+
+toPlot.pA<-toPlot %>% filter(ReadType =="pA") %>% mutate(ReadType="polyA+")
+toPlot.nonpA<-toPlot %>% filter(ReadType =="non_pA")%>% mutate(ReadType="polyA-")
+
+# Function to perform t-tests between normCount in 2dnstream and 1upstream for each ReadType and Phenotype
+perform_t_tests <- function(data) {
+  # Group the data by ReadType and Phenotype
+  results <- data %>%
+    group_by(ReadType, Phenotype) %>%
+    do({
+      # Subset the data for 2dnstream and 1upstream locations
+      upstream <- filter(., Location == "1upstream")$normCount
+      downstream <- filter(., Location == "2dnstream")$normCount
+      
+      # Perform t-test
+      t_test_result <- t.test(upstream, downstream)
+      
+      # Return the test statistics
+      data.frame(
+        ReadType = unique(.$ReadType),
+        Phenotype = unique(.$Phenotype),
+        Location1="1upstream",
+        Location2="2dnstream",
+        t_statistic = t_test_result$statistic,
+        p_value = t_test_result$p.value,
+        mean_upstream = mean(upstream, na.rm = TRUE),
+        mean_downstream = mean(downstream, na.rm = TRUE)
+      )
+    })
+  
+  return(results)
+}
+
+# Calculate t-tests for each pair
+t_test_results <- perform_t_tests(toPlot)
+print(t_test_results)
+```
+
+    ## # A tibble: 14 × 8
+    ## # Groups:   ReadType, Phenotype [14]
+    ##    ReadType Phenotype   Location1 Location2 t_statistic    p_value mean_upstream
+    ##    <chr>    <chr>       <chr>     <chr>           <dbl>      <dbl>         <dbl>
+    ##  1 non_pA   0red        1upstream 2dnstream     -0.0377    9.71e-1       28.1   
+    ##  2 non_pA   1red        1upstream 2dnstream     -4.55      7.22e-4        7.51  
+    ##  3 non_pA   2fullRed    1upstream 2dnstream     -5.12      5.34e-5       11.5   
+    ##  4 non_pA   3redParts   1upstream 2dnstream     -6.19      2.50e-6       10.1   
+    ##  5 non_pA   4greenParts 1upstream 2dnstream     -1.17      2.58e-1       13.8   
+    ##  6 non_pA   6fullGreen  1upstream 2dnstream      1.01      3.38e-1       19.5   
+    ##  7 non_pA   8green      1upstream 2dnstream      0.816     5.06e-1       42.9   
+    ##  8 pA       0red        1upstream 2dnstream    -14.5       1.69e-6        4.40  
+    ##  9 pA       1red        1upstream 2dnstream    -13.5       9.31e-8        0.540 
+    ## 10 pA       2fullRed    1upstream 2dnstream    -11.4       8.38e-8        1.26  
+    ## 11 pA       3redParts   1upstream 2dnstream    -11.8       5.98e-8        0.974 
+    ## 12 pA       4greenParts 1upstream 2dnstream     -9.80      4.46e-7        0.0880
+    ## 13 pA       6fullGreen  1upstream 2dnstream    -10.8       4.83e-6        0.0827
+    ## 14 pA       8green      1upstream 2dnstream     -2.07      2.87e-1        0.201 
+    ## # ℹ 1 more variable: mean_downstream <dbl>
+
+``` r
+sigBars <- t_test_results %>% group_by(ReadType) %>% 
+  dplyr::mutate(row_num = row_number(),ypos=pmax(mean_upstream,mean_downstream)+20,xmin=row_num-0.2,xmax=row_num+0.2,
+                sig = case_when(p_value <= 0.05 & p_value >0.01~"*",
+                                p_value <= 0.01 & p_value >0.001~"**",
+                                p_value <= 0.001~"***",
+                                TRUE~"NS"))
+sigBars.pA <- sigBars %>%  filter(ReadType =="pA") %>% mutate(ReadType="polyA+")
+sigBars.nonpA <- sigBars %>%filter(ReadType =="non_pA") %>% mutate(ReadType="polyA-")
+
+plot.pa<-toPlot.pA %>%
+  group_by(Phenotype,ReadType,Location) %>% dplyr::summarize(avg = mean(normCount),sem = sd(normCount)/sqrt(n())) %>%
+  ggplot(aes(x=Phenotype,y=avg)) + geom_col(aes(fill = Location),position=position_dodge(0.9)) + 
+  geom_errorbar(aes(ymin=avg-sem,ymax=avg+sem,group=Location),width=0.4,position=position_dodge(0.9),lineend='round',color='black')+
+  geom_jitter(data = toPlot.pA, aes(x=Phenotype,y=normCount,fill=Location),position=position_jitterdodge(0.9,jitter.width=0.1),inherit.aes = F,size=0.5)+
+  scale_fill_manual(values=c("#E99F45","#0078A4")) + theme_bw() + themes + 
+  ylab("Number of reads (RPKM)") + 
+  facet_grid(~ReadType,scales='free')+
+  geom_signif(y_position = sigBars.pA$ypos, xmin = sigBars.pA$xmin, 
+              xmax = sigBars.pA$xmax, annotation = sigBars.pA$sig,
+              tip_length = 0,textsize = 3) + ylim(0,260)
+```
+
+    ## `summarise()` has grouped output by 'Phenotype', 'ReadType'. You can override
+    ## using the `.groups` argument.
+
+``` r
+plot.nonpa<-toPlot.nonpA %>%
+  group_by(Phenotype,ReadType,Location) %>% dplyr::summarize(avg = mean(normCount),sem = sd(normCount)/sqrt(n())) %>%
+  ggplot(aes(x=Phenotype,y=avg)) + geom_col(aes(fill = Location),position=position_dodge(0.9)) + 
+  geom_errorbar(aes(ymin=avg-sem,ymax=avg+sem,group=Location),width=0.4,position=position_dodge(0.9),lineend='round',color='black')+
+  geom_jitter(data = toPlot.nonpA, aes(x=Phenotype,y=normCount,fill=Location),position=position_jitterdodge(0.9,jitter.width=0.1),inherit.aes = F,size=0.5)+
+  scale_fill_manual(values=c("#E99F45","#0078A4")) + theme_bw() + themes + 
+  ylab("Number of Reads (RPKM)") + 
+  facet_grid(~ReadType,scales='free')+
+  geom_signif(y_position = sigBars.nonpA$ypos, xmin = sigBars.nonpA$xmin, 
+              xmax = sigBars.nonpA$xmax, annotation = sigBars.nonpA$sig,
+              tip_length = 0,textsize = 3) + ylim(0,260)
+```
+
+    ## `summarise()` has grouped output by 'Phenotype', 'ReadType'. You can override
+    ## using the `.groups` argument.
+
+``` r
+annotate_figure(ggarrange(plot.pa,plot.nonpa,common.legend = T,ncol=2,align='v',legend='top'),top="Figure 7F: Number of pA+ and pA- reads that start up- and downstream of GTc.171")
+```
+
+    ## Warning: Removed 23 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
+    ## Removed 23 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
+
 ![](Figure_7_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+``` r
+#ggsave("/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_5p_counts_around_3343/number_5p_ends_up_dnstream_3343.norm.sideBySide.pdf",plot = last_plot(),height = 2.5, width = 4, units='in')
+```
 
 ## Figure 7G - Di-AA prevalence
 

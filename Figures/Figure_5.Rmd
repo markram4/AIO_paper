@@ -782,68 +782,7 @@ annotate_figure(allFinal,right = text_grob("polyA+ Reads",color='red',face="bold
 ```
 
 
-## Figure 5G - 3' ends
 
-
-```{r}
-
-## Read in the data with number of reads ending at each 3' end
-inFile1 <- read.table("/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_3p_end_num/all.combined_normalized_3p_read_count.ruby_round1.txt",header=T)
-inFile2 <- read.table("/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_3p_end_num/all.combined_normalized_3p_read_count.ruby_round2.txt",header=T)
-inFile5 <- read.table("/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_3p_end_num/all.combined_normalized_3p_read_count.ruby_round5.txt",header=T)
-
-## Define theme
-themes <- theme(plot.title = element_text(size=8,color='black',hjust = 0.5),
-                axis.text.x = element_text(size=8,color = 'black',angle = 90, vjust = 0.5, hjust=1),
-                axis.text.y = element_text(size=8,color = 'black'),
-                line = element_line(color = 'black',linewidth=0.3,lineend="round"),
-                axis.title.x = element_blank(),
-                axis.title.y = element_text(color = "black",size=8),
-                strip.text = element_text(color = "black",size=8),
-                legend.position = 'top',
-                legend.key.size= unit(0.3,"cm"),
-                legend.text = element_text(color = "black",size=6),
-                legend.title = element_text(color = "black",size=6),
-                axis.ticks.length=unit(0.0516,"in"))
-
-## Merge and format data sets
-data3 <- rbind(inFile1,inFile2,inFile5) %>% filter(grepl("RUBY",name) & pheno !="01_MK001_rep1.35S.7green") %>% 
-  separate(pheno, into=c("sample","prom","pheno"),sep = "[.]") %>%
-  mutate(pheno = case_when(pheno == "5fullRed" ~ "3fullRed",
-                           pheno == "2reddish" ~ "1red",
-                           prom == "35S_dcl1234" ~ "0red_dcl", TRUE~pheno),
-         prom = case_when(prom == "35S_dcl1234" ~ "35S", TRUE~prom))%>%
-  group_by(start,stop,prom,pheno) %>% 
-  dplyr::summarize(merge_count = mean(count),merge_normScore = mean(normScore),if_merge=n()) 
-
-## Perform ANOVA test
-anova <- aov(merge_normScore ~ pheno, data = data3)
-tukey <- TukeyHSD(anova)
-tukey_df <- as.data.frame(tukey$pheno)
-tukey_df <- mutate(tukey_df, Sig = case_when(`p adj` < 0.001 ~ "***",`p adj` > 0.001 & `p adj` < 0.01 ~ "**",`p adj` > 0.01 & `p adj` < 0.05 ~ "*", TRUE ~ "NS"))
-
-print(tukey_df)
-cld <- multcompLetters4(anova, tukey)
-
-Tk <- group_by(data3, pheno) %>%
-  dplyr::summarise(mean=mean(merge_normScore), quant = quantile(merge_normScore, probs = 0.75)) %>%
-  arrange(desc(mean))
-
-# extracting the compact letter display and adding to the Tk table
-cld <- as.data.frame.list(cld$pheno)
-Tk$cld <- cld$Letters
-
-ggplot(data3,aes(x=pheno,y=merge_normScore,fill=pheno))   +
-  geom_violinhalf(position = position_nudge(x = -0.25, y = 0),flip=T) +
-  geom_boxplot(notch = T,outlier.shape=4,width = 0.4)+  
-  theme_bw()+themes +
-  scale_fill_manual(values=c("#853061","#B03060","#C97795","#E8C8D4","#C2D5C0","#7FA779","#196400"))+
-  scale_color_manual(values=c("#853061","#B03060","#C97795","#E8C8D4","#C2D5C0","#7FA779","#196400"))+
-  scale_y_log10()+ ylab("Normalized read count at each 3' end (log10)") + theme(legend.position= "none")+
-  geom_text(data=Tk,aes(x=pheno,y=quant,label=cld), size = 3, vjust=-1, hjust =-1) +
-  ggtitle("Figure 5G: Abundance of each 3' end within RUBY")
-
-```
 
 
 
