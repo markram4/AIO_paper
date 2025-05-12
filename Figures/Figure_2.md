@@ -13,8 +13,8 @@ library(tidyverse)
     ## ✔ dplyr     1.1.4     ✔ readr     2.1.5
     ## ✔ forcats   1.0.0     ✔ stringr   1.5.1
     ## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
-    ## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
-    ## ✔ purrr     1.0.2     
+    ## ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+    ## ✔ purrr     1.0.4     
     ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
@@ -22,16 +22,6 @@ library(tidyverse)
 
 ``` r
 library(ggh4x)
-```
-
-    ## 
-    ## Attaching package: 'ggh4x'
-    ## 
-    ## The following object is masked from 'package:ggplot2':
-    ## 
-    ##     guide_axis_logticks
-
-``` r
 library(scales)
 ```
 
@@ -48,11 +38,6 @@ library(scales)
 
 ``` r
 library(patchwork)
-```
-
-    ## Warning: package 'patchwork' was built under R version 4.3.3
-
-``` r
 library(gggenes)
 library(cowplot)
 ```
@@ -88,13 +73,7 @@ library("ggvenn")
 ``` r
 library(eulerr)
 options(bedtools.path = "/usr/local/bin")
-library(bedtoolsr)
-```
-
-    ## Warning in fun(libname, pkgname): bedtoolsr was built with bedtools version 2.30.0 but you have version 2.31.1 installed. Function syntax may have changed and wrapper will not function correctly. To fix this, please install bedtools version 2.30.0 and either add it to your PATH or run:
-    ## options(bedtools.path = \"[bedtools path]\")
-
-``` r
+#library(bedtoolsr)
 library(ggpubr)
 ```
 
@@ -107,11 +86,6 @@ library(ggpubr)
 
 ``` r
 library(ggrepel)
-```
-
-    ## Warning: package 'ggrepel' was built under R version 4.3.3
-
-``` r
 library(multcompView)
 ```
 
@@ -294,8 +268,10 @@ print(tukey_df)
     ## 8green.Wt-6fullGreen.Wt        NS
 
 ``` r
-write.table(tukey_df, file = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/sRNA_count_perSize_perStrand.allSamples.merged.all_sizes_merged.stackedBar.tukey.txt", quote=F, row.names = T, col.names=T, sep= "\t")
+#write.table(tukey_df, file = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/sRNA_count_perSize_perStrand.allSamples.merged.all_sizes_merged.stackedBar.tukey.txt", quote=F, row.names = T, col.names=T, sep= "\t")
+```
 
+``` r
 cld <- multcompLetters4(anova, tukey)
 
 Tk <- noStrandanova %>% separate(phenotype,into="phenotype",extra="drop",sep="[.]") %>% left_join(toLabel.plus,by=c("phenotype","background","class")) %>% ungroup()%>%
@@ -321,7 +297,7 @@ ggplot(toPlot.avgPheno2, aes(x=phenotype,y=avg)) +
   theme(panel.spacing = unit(0.1,"lines"),legend.position="none" )
 ```
 
-![](Figure_2_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+![](Figure_2_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 ## Figure 2B - percent of sRNAs in each size
 
@@ -351,7 +327,7 @@ ggplot(toPlot.avgPheno.pct, aes(x=phenotype,y=pct)) + geom_bar(stat='identity',a
   theme(panel.spacing = unit(0.1,"lines") )
 ```
 
-![](Figure_2_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](Figure_2_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 ## Figure 2C - sRNA coverage plots
 
@@ -387,281 +363,6 @@ tg <- ggplot(t,aes(xmin = Start, xmax = End, y = molecule,forward=orientation,la
 ## Define themes
 themes<-theme(axis.ticks.length=unit(0.0516,"in"),axis.title.x=element_blank(),axis.text.x= element_blank(),axis.text.y= element_text(color = 'black',size = 8,hjust=0.5),axis.line=element_line(color='black',linewidth=0.3,lineend="round"),line = element_line(color = 'black',linewidth=0.3,lineend="round"),axis.title.y = element_text(color = 'black',size = 8),panel.background = element_blank(),panel.grid.major = element_line(color = 'grey95'),panel.grid.minor = element_line(color = 'grey95'),plot.title = element_text(size=8,color='black',hjust = 0.5),strip.text = element_text(size=6,color='black'))
 ```
-
-``` r
-############
-## 'dcl-independent' (non 21 nt) sRNAs in each phenotypic class
-############
-## Always Red (dcl1234)
-dclredPlusFiles.other <- c(list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/dcl/",pattern = "*other_p.bed12",full.names=T),
-                           list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/dcl/",pattern = "*22_p.bed12",full.names=T),
-                           list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/dcl/",pattern = "*23-24_p.bed12",full.names=T))
-
-dclredMinusFiles.other <- c(list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/dcl/",pattern = "*other_m.bed12",full.names=T),
-                           list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/dcl/",pattern = "*22_m.bed12",full.names=T),
-                           list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/dcl/",pattern = "*23-24_m.bed12",full.names=T))
-
-## Add column names to each file, join them, replace any NA values with 0
-dclredPlus.other <- dclredPlusFiles.other %>% 
-  map(~read.table(.,col.names = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart","scores"))) %>%
-  purrr::reduce(left_join, by = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart")) %>%
-  mutate_if(is.numeric,coalesce,0) 
-
-dclredMinus.other <- dclredMinusFiles.other %>% 
-  map(~read.table(.,col.names = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart","scores"))) %>%
-  purrr::reduce(left_join, by = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart")) %>%
-  mutate_if(is.numeric,coalesce,0) 
-
-## Extract only information about RUBY, rename columns by replicate
-dclcov.redPlus.other <- tibble(dclredPlus.other %>% filter(grepl(target,name))) %>%
-  mutate(across(starts_with("scores"), ~ lapply(str_split(.x, ","), as.integer)))%>% 
-  rowwise() %>%
-  mutate(nts = list(seq.int(start,stop-1))) %>% unnest_longer(c(starts_with("scores"),nts)) %>% 
-  rowwise() %>%
-  mutate(size = "other",Phenotype="0red_dcl",scores=mean(c_across(starts_with("scores")), na.rm = TRUE)) %>% select(scores,nts,Phenotype,size) 
-
-dclcov.redMinus.other <- tibble(dclredMinus.other %>% filter(grepl(target,name))) %>%
-  mutate(across(starts_with("scores"), ~ lapply(str_split(.x, ","), as.integer)))%>% 
-  rowwise() %>%
-  mutate(nts = list(seq.int(start,stop-1))) %>% unnest_longer(c(starts_with("scores"),nts)) %>% 
-  rowwise() %>%
-  mutate(size = "other",Phenotype="0red_dcl",scores=mean(c_across(starts_with("scores")), na.rm = TRUE)*-1) %>% select(scores,nts,Phenotype,size)
-```
-
-``` r
-# Always Red (Wt)
-redPlusFiles.other <- c(list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*1red_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_other_p.bed12",full.names=T),
-                        list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*1red_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_22_p.bed12",full.names=T),
-                        list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*1red_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_23-24_p.bed12",full.names=T))
-
-redMinusFiles.other <- c(list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*1red_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_other_m.bed12",full.names=T),
-                        list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*1red_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_22_m.bed12",full.names=T),
-                        list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*1red_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_23-24_m.bed12",full.names=T))
-
-## Add column names to each file, join them, replace any NA values with 0
-redPlus.other <- redPlusFiles.other %>% 
-  map(~read.table(.,col.names = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart","scores"))) %>%
-  purrr::reduce(left_join, by = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart")) %>%
-  mutate_if(is.numeric,coalesce,0) 
-redMinus.other <- redMinusFiles.other %>% 
-  map(~read.table(.,col.names = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart","scores"))) %>%
-  purrr::reduce(left_join, by = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart")) %>%
-  mutate_if(is.numeric,coalesce,0) 
-
-## Extract only information about RUBY, rename columns by replicate
-cov.redPlus.other <-  tibble(redPlus.other %>% filter(grepl(target,name))) %>%
-  mutate(across(starts_with("scores"), ~ lapply(str_split(.x, ","), as.integer)))%>% 
-  rowwise() %>%
-  mutate(nts = list(seq.int(start,stop-1))) %>% unnest_longer(c(starts_with("scores"),nts)) %>% 
-  rowwise() %>%
-  mutate(size = "other",Phenotype="1red",scores=mean(c_across(starts_with("scores")), na.rm = TRUE)) %>% 
-  select(scores,nts,Phenotype,size)
-
-cov.redMinus.other <-  tibble(redMinus.other %>% filter(grepl(target,name))) %>%
-  mutate(across(starts_with("scores"), ~ lapply(str_split(.x, ","), as.integer)))%>% 
-  rowwise() %>%
-  mutate(nts = list(seq.int(start,stop-1))) %>% unnest_longer(c(starts_with("scores"),nts)) %>% 
-  rowwise() %>%
-  mutate(size = "other",Phenotype="1red",scores=mean(c_across(starts_with("scores")), na.rm = TRUE)*-1) %>% 
-  select(scores,nts,Phenotype,size)
-```
-
-``` r
-# Red Parts 
-redPartsPlusFiles.other <- c(list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*3redParts_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_other_p.bed12",full.names=T),
-                        list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*3redParts_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_22_p.bed12",full.names=T),
-                        list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*3redParts_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_23-24_p.bed12",full.names=T))
-
-redPartsMinusFiles.other <- c(list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*3redParts_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_other_m.bed12",full.names=T),
-                        list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*3redParts_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_22_m.bed12",full.names=T),
-                        list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*3redParts_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_23-24_m.bed12",full.names=T))
-
-## Add column names to each file, join them, replace any NA values with 0
-redPartsPlus.other <- redPartsPlusFiles.other %>% 
-  map(~read.table(.,col.names = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart","scores"))) %>%
-  purrr::reduce(left_join, by = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart")) %>%
-  mutate_if(is.numeric,coalesce,0) 
-redPartsMinus.other <- redPartsMinusFiles.other %>% 
-  map(~read.table(.,col.names = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart","scores"))) %>%
-  purrr::reduce(left_join, by = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart")) %>%
-  mutate_if(is.numeric,coalesce,0) 
-
-## Extract only information about RUBY, rename columns by replicate
-cov.redPartsPlus.other <-  tibble(redPartsPlus.other %>% filter(grepl(target,name))) %>%
-  mutate(across(starts_with("scores"), ~ lapply(str_split(.x, ","), as.integer)))%>% 
-  rowwise() %>%
-  mutate(nts = list(seq.int(start,stop-1))) %>% unnest_longer(c(starts_with("scores"),nts)) %>% 
-  rowwise() %>%
-  mutate(size = "other",Phenotype="3redParts",scores=mean(c_across(starts_with("scores")), na.rm = TRUE)) %>% 
-  select(scores,nts,Phenotype,size)
-
-cov.redPartsMinus.other <-  tibble(redPartsMinus.other %>% filter(grepl(target,name))) %>%
-  mutate(across(starts_with("scores"), ~ lapply(str_split(.x, ","), as.integer)))%>% 
-  rowwise() %>%
-  mutate(nts = list(seq.int(start,stop-1))) %>% unnest_longer(c(starts_with("scores"),nts)) %>% 
-  rowwise() %>%
-  mutate(size = "other",Phenotype="3redParts",scores=mean(c_across(starts_with("scores")), na.rm = TRUE)*-1) %>% 
-  select(scores,nts,Phenotype,size)
-```
-
-``` r
-# Green Parts 
-greenPartsPlusFiles.other <- c(list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "4greenParts_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_other_p.bed12",full.names=T),
-                        list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*4greenParts_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_22_p.bed12",full.names=T),
-                        list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*4greenParts_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_23-24_p.bed12",full.names=T))
-
-greenPartsMinusFiles.other <- c(list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*4greenParts_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_other_m.bed12",full.names=T),
-                        list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*4greenParts_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_22_m.bed12",full.names=T),
-                        list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*4greenParts_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_23-24_m.bed12",full.names=T))
-
-## Add column names to each file, join them, replace any NA values with 0
-greenPartsPlus.other <- greenPartsPlusFiles.other %>% 
-  map(~read.table(.,col.names = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart","scores"))) %>%
-  purrr::reduce(left_join, by = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart")) %>%
-  mutate_if(is.numeric,coalesce,0) 
-greenPartsMinus.other <- greenPartsMinusFiles.other %>% 
-  map(~read.table(.,col.names = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart","scores"))) %>%
-  purrr::reduce(left_join, by = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart")) %>%
-  mutate_if(is.numeric,coalesce,0) 
-
-## Extract only information about RUBY, rename columns by replicate
-cov.greenPartsPlus.other <-  tibble(greenPartsPlus.other %>% filter(grepl(target,name))) %>%
-  mutate(across(starts_with("scores"), ~ lapply(str_split(.x, ","), as.integer)))%>% 
-  rowwise() %>%
-  mutate(nts = list(seq.int(start,stop-1))) %>% unnest_longer(c(starts_with("scores"),nts)) %>% 
-  rowwise() %>%
-  mutate(size = "other",Phenotype="4greenParts",scores=mean(c_across(starts_with("scores")), na.rm = TRUE)) %>% 
-  select(scores,nts,Phenotype,size)
-
-cov.greenPartsMinus.other <-  tibble(greenPartsMinus.other %>% filter(grepl(target,name))) %>%
-  mutate(across(starts_with("scores"), ~ lapply(str_split(.x, ","), as.integer)))%>% 
-  rowwise() %>%
-  mutate(nts = list(seq.int(start,stop-1))) %>% unnest_longer(c(starts_with("scores"),nts)) %>% 
-  rowwise() %>%
-  mutate(size = "other",Phenotype="4greenParts",scores=mean(c_across(starts_with("scores")), na.rm = TRUE)*-1) %>% 
-  select(scores,nts,Phenotype,size)
-```
-
-``` r
-# Full Red
-fullRedPlusFiles.other <- c(list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*5fullRed_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_other_p.bed12",full.names=T),
-                        list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*5fullRed_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_22_p.bed12",full.names=T),
-                        list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*5fullRed_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_23-24_p.bed12",full.names=T))
-
-fullRedMinusFiles.other <- c(list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*5fullRed_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_other_m.bed12",full.names=T),
-                        list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*5fullRed_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_22_m.bed12",full.names=T),
-                        list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*5fullRed_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_23-24_m.bed12",full.names=T))
-
-## Add column names to each file, join them, replace any NA values with 0
-fullRedPlus.other <- fullRedPlusFiles.other %>% 
-  map(~read.table(.,col.names = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart","scores"))) %>%
-  purrr::reduce(left_join, by = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart")) %>%
-  mutate_if(is.numeric,coalesce,0) 
-fullRedMinus.other <- fullRedMinusFiles.other %>% 
-  map(~read.table(.,col.names = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart","scores"))) %>%
-  purrr::reduce(left_join, by = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart")) %>%
-  mutate_if(is.numeric,coalesce,0) 
-
-## Extract only information about RUBY, rename columns by replicate
-cov.fullRedPlus.other <-  tibble(fullRedPlus.other %>% filter(grepl(target,name))) %>%
-  mutate(across(starts_with("scores"), ~ lapply(str_split(.x, ","), as.integer)))%>% 
-  rowwise() %>%
-  mutate(nts = list(seq.int(start,stop-1))) %>% unnest_longer(c(starts_with("scores"),nts)) %>% 
-  rowwise() %>%
-  mutate(size = "other",Phenotype="2fullRed",scores=mean(c_across(starts_with("scores")), na.rm = TRUE)) %>% 
-  select(scores,nts,Phenotype,size)
-
-cov.fullRedMinus.other <-  tibble(fullRedMinus.other %>% filter(grepl(target,name))) %>%
-  mutate(across(starts_with("scores"), ~ lapply(str_split(.x, ","), as.integer)))%>% 
-  rowwise() %>%
-  mutate(nts = list(seq.int(start,stop-1))) %>% unnest_longer(c(starts_with("scores"),nts)) %>% 
-  rowwise() %>%
-  mutate(size = "other",Phenotype="2fullRed",scores=mean(c_across(starts_with("scores")), na.rm = TRUE)*-1) %>% 
-  select(scores,nts,Phenotype,size)
-```
-
-``` r
-# Full green
-fullGreenPlusFiles.other <- c(list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*6fullGreen_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_other_p.bed12",full.names=T),
-                        list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*6fullGreen_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_22_p.bed12",full.names=T),
-                        list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*6fullGreen_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_23-24_p.bed12",full.names=T))
-
-fullGreenMinusFiles.other <- c(list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*6fullGreen_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_other_m.bed12",full.names=T),
-                        list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*6fullGreen_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_22_m.bed12",full.names=T),
-                        list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*6fullGreen_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_23-24_m.bed12",full.names=T))
-
-## Add column names to each file, join them, replace any NA values with 0
-fullGreenPlus.other <- fullGreenPlusFiles.other %>% 
-  map(~read.table(.,col.names = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart","scores"))) %>%
-  purrr::reduce(left_join, by = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart")) %>%
-  mutate_if(is.numeric,coalesce,0) 
-fullGreenMinus.other <- fullGreenMinusFiles.other %>% 
-  map(~read.table(.,col.names = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart","scores"))) %>%
-  purrr::reduce(left_join, by = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
-                                  "foo2","blockNum","blockLen","relStart")) %>%
-  mutate_if(is.numeric,coalesce,0) 
-
-## Extract only information about RUBY, rename columns by replicate
-cov.fullGreenPlus.other <-  tibble(fullGreenPlus.other %>% filter(grepl(target,name))) %>%
-  mutate(across(starts_with("scores"), ~ lapply(str_split(.x, ","), as.integer)))%>% 
-  rowwise() %>%
-  mutate(nts = list(seq.int(start,stop-1))) %>% unnest_longer(c(starts_with("scores"),nts)) %>% 
-  rowwise() %>%
-  mutate(size = "other",Phenotype="6fullGreen",scores=mean(c_across(starts_with("scores")), na.rm = TRUE)) %>% 
-  select(scores,nts,Phenotype,size)
-
-cov.fullGreenMinus.other <-  tibble(fullGreenMinus.other %>% filter(grepl(target,name))) %>%
-  mutate(across(starts_with("scores"), ~ lapply(str_split(.x, ","), as.integer)))%>% 
-  rowwise() %>%
-  mutate(nts = list(seq.int(start,stop-1))) %>% unnest_longer(c(starts_with("scores"),nts)) %>% 
-  rowwise() %>%
-  mutate(size = "other",Phenotype="6fullGreen",scores=mean(c_across(starts_with("scores")), na.rm = TRUE)*-1) %>% 
-  select(scores,nts,Phenotype,size)
-```
-
-``` r
-combined_df.other <- rbind(dclcov.redPlus.other, dclcov.redMinus.other,
-                           cov.redPlus.other, cov.redMinus.other, 
-                           cov.fullRedPlus.other, cov.fullRedMinus.other, 
-                           cov.redPartsPlus.other, cov.redPartsMinus.other,
-                           cov.greenPartsPlus.other,  cov.greenPartsMinus.other,
-                           cov.fullGreenPlus.other, cov.fullGreenMinus.other)
-
- 
-
-mk16.all.other<- combined_df.other %>% ggplot(aes(x=nts,y=scores,fill=Phenotype))+ geom_col() +themes +
-  scale_y_continuous(labels=scales::label_number(scale_cut = cut_short_scale())) +
-  ggtitle("Dicer-independent sRNAs in MK072/73 and MK016") + scale_fill_manual(values=c(c("#853061","#B03060","#C97795","#E8C8D4","#C2D5C0","#7FA779")))+
-  facet_wrap(~Phenotype,ncol=1,scales="free",strip.position="right") + theme(legend.position = "none") 
-
-mk16.all.other<-plot_grid(mk16.all.other,tg,align="v",rel_heights = c(1,0.1),ncol=1,common.legend = T,nrow=2, axis="lr")
-```
-
-    ## Warning in as_grob.default(plot): Cannot convert object of class logical into a
-    ## grob.
 
 ``` r
 ############
@@ -894,29 +595,71 @@ cov.fullGreenMinus.21 <-  tibble(fullGreenMinus.21 %>% filter(grepl(target,name)
 ```
 
 ``` r
+# Always Green
+alwaysGreenPlusFiles.21 <- c(list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*8green_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_21_p.bed12",full.names=T))
+
+alwaysGreenMinusFiles.21 <- c(list.files(path = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/bed12_files/", pattern = "*8green_trimmed.mito_chloroFree.sizeFilt.rRNA_tRNA_free_21_m.bed12",full.names=T))
+
+## Add column names to each file, join them, replace any NA values with 0
+alwaysGreenPlus.21 <- alwaysGreenPlusFiles.21 %>% 
+  map(~read.table(.,col.names = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
+                                  "foo2","blockNum","blockLen","relStart","scores"))) %>%
+  purrr::reduce(left_join, by = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
+                                  "foo2","blockNum","blockLen","relStart")) %>%
+  mutate_if(is.numeric,coalesce,0) 
+alwaysGreenMinus.21 <- alwaysGreenMinusFiles.21 %>% 
+  map(~read.table(.,col.names = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
+                                  "foo2","blockNum","blockLen","relStart","scores"))) %>%
+  purrr::reduce(left_join, by = c("name","start","stop","txt","gene","strand","blockStart","blockStop",
+                                  "foo2","blockNum","blockLen","relStart")) %>%
+  mutate_if(is.numeric,coalesce,0) 
+
+## Extract only information about RUBY, rename columns by replicate
+cov.alwaysGreenPlus.21 <-  tibble(alwaysGreenPlus.21 %>% filter(grepl(target,name))) %>%
+  mutate(across(starts_with("scores"), ~ lapply(str_split(.x, ","), as.integer)))%>% 
+  rowwise() %>%
+  mutate(nts = list(seq.int(start,stop-1))) %>% unnest_longer(c(starts_with("scores"),nts)) %>% 
+  rowwise() %>%
+  mutate(size = "21",Phenotype="8green",scores=mean(c_across(starts_with("scores")), na.rm = TRUE)) %>% 
+  select(scores,nts,Phenotype,size)
+
+cov.alwaysGreenMinus.21 <-  tibble(alwaysGreenMinus.21 %>% filter(grepl(target,name))) %>%
+  mutate(across(starts_with("scores"), ~ lapply(str_split(.x, ","), as.integer)))%>% 
+  rowwise() %>%
+  mutate(nts = list(seq.int(start,stop-1))) %>% unnest_longer(c(starts_with("scores"),nts)) %>% 
+  rowwise() %>%
+  mutate(size = "21",Phenotype="8green",scores=mean(c_across(starts_with("scores")), na.rm = TRUE)*-1) %>% 
+  select(scores,nts,Phenotype,size)
+```
+
+``` r
 combined_df.21 <- rbind(dclcov.redPlus.21, dclcov.redMinus.21,
                            cov.redPlus.21, cov.redMinus.21, 
                            cov.fullRedPlus.21, cov.fullRedMinus.21, 
                            cov.redPartsPlus.21, cov.redPartsMinus.21,
                            cov.greenPartsPlus.21,  cov.greenPartsMinus.21,
-                           cov.fullGreenPlus.21, cov.fullGreenMinus.21)
+                           cov.fullGreenPlus.21, cov.fullGreenMinus.21,
+                           cov.alwaysGreenPlus.21, cov.alwaysGreenMinus.21)
 
 mk16.all.21<- combined_df.21 %>% ggplot(aes(x=nts,y=scores,fill=Phenotype))+ geom_col() +themes +
   scale_y_continuous(labels=scales::label_number(scale_cut = cut_short_scale())) +
-  ggtitle("Dicer-dedependent sRNAs in MK072/73 and MK016") + scale_fill_manual(values=c(c("#853061","#B03060","#C97795","#E8C8D4","#C2D5C0","#7FA779")))+
+  ggtitle("21nt sRNAs in MK072/73, MK016, MK017") +
+  scale_fill_manual(values=c(c("#853061","#B03060","#C97795","#E8C8D4","#C2D5C0","#7FA779","#196400")))+
   facet_wrap(~Phenotype,ncol=1,scales="free",strip.position="right") + theme(legend.position = "none") 
 
-mk16.all.21<-plot_grid(mk16.all.21,tg,align="v",rel_heights = c(1,0.1),ncol=1,common.legend = T,nrow=2, axis="lr")
+plot_grid(mk16.all.21,tg,align="v",rel_heights = c(1,0.1),ncol=1,common.legend = T,nrow=2, axis="lr")
 ```
 
     ## Warning in as_grob.default(plot): Cannot convert object of class logical into a
     ## grob.
 
-``` r
-ggarrange(mk16.all.21,mk16.all.other,ncol=2,align = "hv")
-```
+![](Figure_2_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
-![](Figure_2_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+``` r
+#ggsave(filename = "/Users/mariannekramer/Google Drive/Kramer_et_al_AIO/Figures/ruby_srna/coverage/mk016_17_73_sRNA_coverage_all_phenotypes.21.pdf",plot=mk16.all.21,height=4,width=3,units="in")
+
+#ggarrange(mk16.all.21,mk16.all.other,ncol=2,align = "hv")
+```
 
 ## Figure 2D – Always Red wt vs dcl1234 venn diagram
 
@@ -969,7 +712,7 @@ ggvenn(filtered_wt_red_vs_dcl, fill_color=c("#853061","#B03060"),
                         stroke_size = 0.5) + ggtitle("Figure 2D: Always Red (Wt) vs dcl1234 Unique sRNAs")
 ```
 
-![](Figure_2_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+![](Figure_2_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 ## Figure 2E - Always Red wt vs dcl1234 size distribution
 
@@ -1026,7 +769,7 @@ ggplot(wt_red_vs_dcl.toPlot.specifics,aes(x=class,y=count,fill=as.factor(length)
   ggtitle("Figure 2E: Always Red (Wt) vs dcl1234 Unique sRNAs sizes")
 ```
 
-![](Figure_2_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+![](Figure_2_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
 ## Figure 2F - sRNA vs phenotyping
 
@@ -1121,7 +864,7 @@ ggplot(sRNA.stranded.pheno,aes(x=Silencing,y=RPM.all,color=Genotype)) + geom_poi
 
     ## `geom_smooth()` using formula = 'y ~ x'
 
-![](Figure_2_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+![](Figure_2_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 ## Figure 2G - Full Red wt vs dcl1234 venn diagram
 
@@ -1160,7 +903,7 @@ ggvenn(filtered_wt_fullRed_vs_dcl, fill_color=c("#853061","#C97795"),
                         stroke_size = 0.5)+ ggtitle("Figure 2G: Fully Red (Wt) vs dcl1234 Unique sRNAs")
 ```
 
-![](Figure_2_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
+![](Figure_2_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
 ## Figure 2H- Full Red wt vs dcl1234 size distribution
 
@@ -1202,4 +945,4 @@ ggplot(wt_fullRed_vs_dcl.toPlot.specifics,aes(x=class,y=count,fill=as.factor(len
   geom_text(inherit.aes = F, data=toLabel,aes(x=class,y=-1000,label = total),size=3,color="black")+ ggtitle("Figure 2H: Fully Red (Wt) vs dcl1234 Unique sRNAs sizes")
 ```
 
-![](Figure_2_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+![](Figure_2_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
